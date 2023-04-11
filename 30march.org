@@ -1,0 +1,101 @@
+#+title: Edureka 30march
+
+* Shell Scripting
+** Shells
++ Shell /bin/sh
++ C Shell /bin/csh
++ Korn Shell /bin/ksh
++ Bourne Again Shell /bin/bash
+
+** Bash config files
++ .bash_profile
++ .bash_history
++ .bash_logout
++ .bashrc
+
+** Variables
++ user-defined variables
++ system-defined variables (Upper Case)
+
+
+* Kerberos
++ Authentication protocol
++ Uses symmetric key authentication
+
+** KDC database(distribution center)
++ generate tgt + key
+
+** Installation
++ turn firewall off and edit /etc/resolv.conf
++ install krb5-server and krb5-workstation and pam_krb5
++ edit /etc/krb5.conf
++ in realm change to remote-server-1.runs.com
+  - change admin_server to the same
+  - default_domain = runs.com
++ edit /var/kerberos/krb5kd/kd*.acl
+  change admin
++ edit /var/kerberos/krb5kd/kdc.conf
+  - change domain
+
+*** create database
+- kdb5_util create -s
+  will ask for master key
+- will create principal in /var/kerberos/krb5kdc/
+*** restart and enable krb5kdc with systemctl
+
+** use kadmin.local command to edit principal
++ addprinc root/admin
+  - password
++ addprinc edureka
+  - password
++ addprinc -randkey host/hostname.runs.com
+  - ktadd host/hostname.runs.com
+  - quit
+** edit ssh_config
+- uncomment host, api auth and set to yes for both
+- edit sshd_config disable pass_auth and enable kerberos auth and set to yes
+- systemctl restart sshd.service
+- authconfig --enablekrb5 --update
+- switch to another user and gen ticket
+- kinit
+- klist (shows ticket)
+- ssh remote-server-1.runs.com
+
+* ISCSI
++ Internet Protocol based storage networking
++ LVM logical volume manager
++ yum install targetcli
++ disable firewall
++ fdisk -l
++ pvcreate /dev/1
+  vgcreate  newivol /dev/1  (volgroup)
+  lvcreate -n ilvm -L 3G newivol (logicvol)
++ targetcli
+  - cd backstores/block
+  - create block1 /dev/newivol/ilvm (ordermatters)
+  - cd to iscsi: create iqn.2023-03.com.runs:t1
+  - attach acl,lun,portal
+  - cd portals and create
+  - cd luns and create /backstores/block/block1
+  - cd acls and create iqn.2023-03.com.runs:client
+  - exit
+  - checkwith netstat -ant
+
+** on machine2
+- yum install iscsi-initiator-utils
+- edit /etc/iscsi/initiatorname.iscsi
+- systemctl restart iscsi and check for active
+- check firewall with getenforce
+- iscsiadm --mode discovery --type sendtargets --portal 192.168.56.22
+- now login
+- iscsiadm --mode node --targetname iqn.2023-03.com.tejas:t1 --portal 192.168.56.21 --login
+- lsblk --scsi
+- mkfs.ext4 /dev/sde
+- mkdir /mnt/blockdir
+  mount /dev/sde /mnt/blockdir
+
+
+- make index.html and personal.conf apache and nginx
+- proxy_pass on different port
+- change ssh_port on different port using config
+- key-gen and connect from ec2 diff user

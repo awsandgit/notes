@@ -1,0 +1,130 @@
+vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+
+ONBOOT=yes
+
+
+vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
+en
+IPADDR=10.1.1.21
+IPADDR=same as ip
+192.168.56.21
+
+
+Edureka 21march
+
+
+rpm -i
+rpm -evh telnet
+rpm -i packagename
+
+yum as the better package manager
+whatis
+
+* vi /etc/yum.conf
+- if keepcache is 1 it is going to use cachedir
+- exactarch if 1, will check architecture b4 installing
+- obsolete for updates
+
+* vi /etc/yum.repos.d/CentOS-Base.repo
+
+in /etc/yum.repos.d/
+- mkdir newdir
+- cp Base.repo testrepo.repo
+- except testrepo.repo
+- mv all.repo /etc/yum.repos.d/newdir/
+
+mkdir -p /centos/repos
+mv *rpm /centos/repos
+- use telnet and httpd binary mirror rpm
+
+
+in testrepo.repo
+delete all except base and baseurl and 
+gpgcheck=0
+change
+name to testrep
+and file:///centos/repos
+
+* create database for repo using createrepo
+
+createrepo -d /centos/repos
+
+will generate repodata and xml files in /centos/repos
+
+yum clean all
+yum list all
+
+edit testrepo.repo
+add enable
+
+for apache2
+- vi /etc/httpd/conf/httpd
+- /var/www/html
+- add ip and server name
+- scriptalias goto
+- Alias /repos/ "/repos/"
+- 
+- cp  Directory section and paste
+- and add /repos
+- 
+- cp Options line 
+- and paste on directory /repos
+- and Options Follow Symlink
+setenforce 0
+iptables -F
+service httpd restart
+go to ip/repos/
+
+Monitoring Process and Resources
+- top
+	load average 1,5,15 min
+- ps
+	ps -ef
+	ps -aux
+- pstree
+- nice
+	renice -n 10 -p PID
+- kill
+	kill -l
+	kill -1 PID signal hangup
+	kill -6 PID signal aborted
+	kill -9 PID immediate and consistent 
+- uptime
+	uptime -p
+- df
+- free
+- vmstat
+- jobs
+	fg %Processid
+	e.g: fg %1
+
+
+Linux Priority 0-139; 0-99 system processes 100-139 -user
+
+* Top stats and keywords:
+- NI -20 highest +20 lowest
+- Priority=Nice value +20
+- Virtual Memory = Physical Memory + swap space
+- Resident Memory RES
+- Shared Memory SHR
+- States S : R is running, S is sleeping, Zombie, Interruptable
+
+< high priority
+l multihreaded
+s sessionleader
++ foreground process
+N  
+
+systemctl or systemd commands
+- systemctl start,stop,restart
+- systemctl try-restart name.service
+- status,is-active
+- enable,disable
+- systemctl list-units --type service
+- target
+
+Device files /dev/
+tty
+- pts is pseudo terminal
+to send a msg to another terminal
+echo "msg" > /dev/pts/2

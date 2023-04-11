@@ -1,0 +1,100 @@
+#+title: Edureka-Training 24March
+
+* User Administration
+
+** /etc/passwd
+- 0-99 UID allocated by system for its services
+- 100-499 UID reserved for Post Installation Scripts
+- 500-999 UID for system daemons - Optionals
+- 1000+upto(65536) UID for human users
+
+** commands
+- usermod -c "give a comment" username
+- useradd -c "commmentonCreateion" username
+- passwd
+- userdel username (doesn't delete home dir)
+  - userdel -r username (will delete home dir)
+- useradd -d /dirpath username (make another home dir)
+- can copy from /etc/skel to another homedir
+
+** groups in /etc/group
+- groups username
+- g primary group
+- G secondary group
+- usermod -G groupname username (will remove the user from previous secondary group)
+- groupadd groupnewname
+- max secondary group is 15
+- usermod -aG groupname username
+- /etc/gshadow contains group conf but not really used
+- groupdel groupname
+- id
+- package gui: system-config-users
+
+** /etc/shadow
+- username:passwd:daysb:daysRequB4PassChanged:ValidityOfPasswd:ShowWarning-B4-no-of-days:disabled:expire
+
+*** encryption used for passwd
+- $6 : SHA-512
+- $5 : SHA-256
+- $2y : blowfish
+- $1 : MD5
+
+** chage command for changing password expiry
+- chage -M 1 username (num of day b4 pass expires)
+- chage -W 3 username (warning period)
+- man chage (check options)
+
+** Access Control DAC and MAC
++ DAC discretionary AC
++ MAC mandatory AC
++ r(4) w(2) x(1)
++ u g o
++ user group others(rwx rwx rwx)
++ 777 (4+2+1 4+2+1 4+2+1)
++ files have 666 and dir have 777 by default
+
+*** Umask masking the user permission
++ 022
++ files always with 644 and dir 755
++ umask 0 (command to change umask)
+
+*** chown
++ chown user1:group file
++ chgrp to chnagegroup - chgrp groupname file
++ chown -R user:group filname
+
+*** chmod
++ chmod ugo-x dir/filname
+
+** SUID and SGID executable
+- set user Id = 4 s/S at user s=x+S
+- set group id = 2  "s/S" at group
+- sticky =1 t/T at others
+- see binary of passwd command in /usr/bin/passwd
+- chmod u+s /usr/bin/passwd
+- locate command to see files
+- find / -perm /4000
+- permission is 4000 suid
+- chmod +t /share
+- with the above only the created user can delete the file
+
+** ACL Access Control List
+- try owner and group permission on /shared folder
+- getfacl /share
+- setfacl -m(modify) u:username:rwx /share
+-d back to default
+-x u:username to remove all
+-b to remove all
+
+* TASK
+- MySQL on private-server
+  user--rohit@localhost
+  pass--mysqlpass
+  user--mysqlrootpassi
+  375840207
+
+
+- WordPress can be on public subnet
+- MongoDB
+
+- create a shared dir

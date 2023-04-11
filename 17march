@@ -1,0 +1,25 @@
+Edureka training session 17March
+
+- Linux FileSystem
+- Linux Boot Process
+- runlevels with systemctl isolate *.target
+- Create a vm with centos on it
+- resetting root password
+	rd.break enforcing=0 while grub edit
+	mount -o remount,rw /sysroot
+
+	passwd
+- after boot
+	restorecon /etc/shadow
+- and reboot
+
+
+Mentor task:
+- add sudo to users group
+- swap size
+- add user to group
+- deploy web server - public server access via a private server
+- create vpc
+- subnetting on vpc
+- EC2,EBS
+- umask value

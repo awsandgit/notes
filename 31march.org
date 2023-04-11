@@ -1,0 +1,22 @@
+#+title: Edureka 32march
+
+
+* Kerberos Revision
++ edit resolv.cnf and change ip
++ edit /etc/krb5.cnf and change realms and edit .acl
++ /var/kerberos/krb5kdc/
+
+* mariadb-server mariadb install
++ start the server
++ mysql_secure_installation
++ alwasy take backup as root
++ mysqldump --user=root --password="yourpass" --result-file=test.sql db_name
++ To restore:
+  - always create the same database name first
+  - on shell:
+    - mysql -u root -p "" db_name<test.sql
+
+** log4j
+** sticky session
+** namespace
+** c group

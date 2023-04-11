@@ -1,0 +1,50 @@
+* 20March Edureka Notes:
+
+** Recap of boot process, kernel and runlevels
+** setup vm lab
+
+	- Linux File Types:
+	- regular file : -
+	- directory file : d
+	- symbolic links : l
+	- Character device files : c
+	- Block device files : b
+
+** Basic Linux commands 
+	- using cat as simple editor
+	- about vi editor
+
+** /dev/stdin 0, /dev/stdout 1, /dev/stderr 2
+	- redirecting errors/output to files or /dev/null
+ex: - cat filename 1>output.file 2>&1
+
+** NetWork configuration
+vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+-	change ONBOOT=yes
+on enp0s8
+-	change BOOTPROTO=none
+-	change IPADDR=10.1.1.21 (ip must be in range of the assigned gateway)
+- 	map ip on /etc/hosts
+
+** login as root
+- useradd newuser
+- passwd newuser	
+- sudo doesn't work by default for newuser
+
+** visudo
+- to make newuser a sudo user
+ALL ALL =(ALL) ALL
+- ALL 1. all user allowed
+- ALL 2. from any host command can be issued
+- ALL 3. user as you are running the command
+- ALL 4. command
+add entry
+-	newuser ALL=(ALL) ALL
+
+-	newuser ALL=(ALL) /usr/bin/vi /etc/hosts
+newuser can now only edit that /etc/hosts with sudo
+
+- set NOPASSWD
+
+- rpm is the redhat package manager
+

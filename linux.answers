@@ -1,0 +1,27 @@
+check memory,cpu- top,htop
+different modes in vi: Insert,Normal,Visual
+redirection operator: > and >>
+tar command: 
+to uncompress
+tar -xvf archive.tar 
+tar -xzvf archiv.tar.gz
+tar -czvf arhivename.tar.gz file1 file2
+options:
+-x extract
+-f file
+-z zip
+-v verbose
+-c create
+
+terminate process: kill,pkill
+bashscript to delete all files:
+#!/bin/bash
+rm *linux*
+
+schedule a task:
+- add cron entry using crontab -e
+
+rm fails: due to permission issue
+
+vi -R 
+

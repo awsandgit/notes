@@ -1,0 +1,92 @@
+#+title: 29march Edureka
+
+* DHCP (Dynamic Host Configuration Protocol)
++ dhcpd.service ports:63,64
++ DHCP process - DORA
+  - discovery offer request access
++ install dhcpd package
+  - cp /usr/share/doc/dhcpp-4.2.5/dhcpd.conf.example /etc/dhcp/dhcpd.conf
+  - systemctl restart named
+  - edit /etc/resolv.conf
+  - restart named
+  - edit /etc/dhcp/dhcpd.conf
+  - subnet 192.168.56.0 netmask 255.255.255.0 {
+    range 192.168.56.23 192.168.56.30;
+    option boradcast-address 192.168.56.255;
+    option routers 192.168.56.1;
+    }
+  - systemctl enable dhcpd.service and restart
+  - go to node-1
+  - edit /etc/sysconfig/network-scripts/ifcfg-enp0s8
+    comment out ip
+    add bootproto back to dhcp
+  - edit /etc/resolv.conf
+    add ip of remote-server-1
+    ifup enp0s8 and ifdown
+  - edit /etc/dhcp/dhcpd.conf back on remote-server-1
+    add ethernet address of enp0s8 of node-1:
+    host node-1{
+    hardware ethernet (hex:hex:hex:hex:hex:hex)
+    fixed-address 192.168.56.35;
+    }
+    restart node-1 and check ip
+
+* Apache WebServer(httpd)
++ main conf file /etc/httpd/conf/httpd.conf
++ module conf file in /etc/httpd/conf.d/*
++ document root default: /var/www/html
++ port 80(http), 443(https)
+
+** Elinks
++ text-based-browser
++ yum install elinks
++ elinks url
+
+** Apache Virtual Host
++ Temporary copy of the host(main) machine
++ edit http.conf
+
+#+begin_src .conf
+<VirtualHost ip:80>
+DocumentRoot /path/to
+ServerName hostname.runs.com
+ServerAdmin root@hostname.runs.com
+ErrorLog "var/log/httpd/virt_err_log"
+CustomLog "var/log/httpd/virt_access_log" combined
+</VirtualHost>
+#+end_src
+
++ httpd -t (check syntax)
++ elinks servername
+
+** cgi-bin common-gateway-interface
++ create a perl script hello.pl in /var/www/cgi-bin
+#+begin_src perl
+#!/usr/bin/perl
+print "Content-type: text/html\n\n";
+print "Hello,World!";
+#+end_src
+
+#+RESULTS:
+: 1
+
++ make it executable
++ elinks http://192.168.56.22/cgi-bin/hello.pl
+
+** TLS Security
++ SSL old version for security
+
+** private dir with authentication in apache
++ in Directory
+    <Directory "/var/www/html/private">
+  - AuthType Basic
+  - AuthName "Password protected area"
+  - AuthUserFile /etc/httpd/conf/passwd
+  - Require user newuser
+    </Directory>
+  - htpasswd -c /etc/httpd/conf/passwd newuser
+    will create and put the password in that file
+  - *make a hidden passwd file*
+  - chmod 600 /etc/httpd/conf/passwd
+    chown apache:apache /etc/httpd/conf/passwd
+  - switch to new user and elinks the url/private

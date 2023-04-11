@@ -1,0 +1,20 @@
+#+title: Git
+
+
+* Version Control System:
++ aka SCM(Source Code Management) or RCS(Revision Control System)
++ manages changes to codebase
+
+** Centralized VCS - prone to single-point failure
+** Distributed VCS
+
+* Workspace
++ Repository
+
+
+** Git
+- most operation on local
+- free OSS
+- easy integration with other tools
+- can be used as centralized VCS
+- who , what and how to get back to original code

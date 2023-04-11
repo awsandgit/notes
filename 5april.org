@@ -1,0 +1,65 @@
+#+title: Edureka 5th april
+
+* Python scripting
+
+#+begin_src python
+
+age = 22
+name = "rohit"
+array= [2,22,44,55,43]
+print("hello")
+#+end_src:
+
+#+RESULTS:
+: None
+
+** Variable
+** SDT(Standard Data Type)
+*** Immutable- number,string,tuples
+- number int,float,complex number
+- String 'a'  "A"
+- tuples
+
+*** Mutable -
+- List
+- dictionaries
+- set
+
+**** IMP
++ sudo cp -r app_dir/{bin,include,lib,share} /usr/
+
+
+* SDLC
+** Waterfall Model
+- Requirements
+- S. Design
+- S. Implementation
+- S. Deployment
+- S. Testing
+- S. Maintenance
+
+** Agile Model (failed at start due to conflicts b/w dev and ops team)
+
+* Development process - DevOps
+* Application architecture - Microservices
+* Deployment and packaging - containers
+* Application infrastructure - cloud
+
+
+* 3-tier architecture (Web Application Architecture)
++ Files
++ Logic
++ Database
+
+
+* SOA  - Service Oriented Architecture
+- Break large code into modules that are loosely coupled
+
+* MicroServices architecture
+** Scaling
+*** Horizontal Scaling
+- Scale in (decrease)
+- Scale out
+*** Vertical Scaling
+- Scale up
+- Scale down (decrease)

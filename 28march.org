@@ -1,0 +1,90 @@
+#+title: Edureka 28march
+
+
+* DNS Top-Down Approach
+- search from right to left
+- Various types of records:
+  + port 53
+  + A - address record: hostnam
+  + PTR - Reverse lookup
+
+* bind
+- edit /etc/hosts i
+- install bind bind-utils bind-chroot
+- edit /etc/named.conf
+- add listen on port add ip and localhost
+- allow-query localhost, 10.1.10.0/24
+- add zone "test.com" In {
+    type master;
+    file 'test.fwd.zone';
+    allow-update { none;};
+      };
+
+zone "1.1.10.in-addr.arpa" IN {
+type mster;
+file "test.rev.zone"
+allow-update {none; };
+} ;
+
+- cp /var/named/named.localhost /var/named/runs.fwd.zonx
+- cp /var/named/named.localhost /var/named/runs.rev.zone
+
+** in runs.fwd.zone file
+- TTL for time in seconds requests stops there
+
+- IN SOA hostname.runs.com. root.runs.com.
+  add date 2023033801; serial
+                  fwd and 02 for rev
+                  3600; refresh
+                  1800; retry
+                  604800 ; expire
+                  86400 ); minimum
+                  delete rest
+; Name Server
+- @ IN NS hostname1.runs.com.
+; Hostname to ip resolve
+- IN A 192.168.56.21
+; host in this domain
+- IN A 192.168.56.22
+
+hostname1 IN A 192.168.56.21
+hostname2 IN A 192.168.56.22
+
+** in runs.rev.zone file
+- add same entries in rev file
+- change date to 02; in serial
+
+; Name Server
+- @ IN NS hostname1.runs.com.
+; for reverse lookup
+- @ IN PTR runs.com.
+; hostname to ip
+- hostname1.runs.com. IN A 192.168.56.21
+; hostname to this domain
+- hostname2.runs.com. IN A 192.168.56.22
+- 21 IN PTR machine1.runs.com.
+- 22 IN PTR machine2.runs.com.
+
++ setenforce 0
++ iptables -F
+*** commands:
++ chgrp named /var/named/tejas.fwd.zone
++ chgrp named /var/named/tejas.rev.zone
+
++ named-checkconf /etc/named.conf
+
++ named.checkzone machine1.runs.com /var/named/runs.rev.zone
++ named.checkzone machine1.runs.com /var/named/runs.rev.zone
+
++ vi /etc/resolv.conf
+  - change ip on both machines
+
++ systemctl restart named.service
++ dig google.com
+-- for reverse lookup
++ dig -x ip
+wordpress login
+wp-site-1
+user-1
+user-1pass
+fuc496k
