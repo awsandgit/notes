@@ -10,6 +10,7 @@
 
 * Workspace
 + Repository
+  + Staging Area
 
 
 ** Git
@@ -18,3 +19,27 @@
 - easy integration with other tools
 - can be used as centralized VCS
 - who , what and how to get back to original code
+
+** git commmands:
+- git config --global user.name "awsandgit"
+- git config --global user.email "aws4em@gmail.com"
+- git config -l
+- git clone repourl
+- git remote add origin remoteurl.git
+  token: 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
+- git branch (to see branches)
+- git branch newbranch
+- git checkout newbranch
+- git reset HEAD filename (to unstage a file)
+- git branch -a
+
+** git buzzwords:
+- master (default/main branch)
+- dev/feature branch (derieved from master branch)
+- head (pointer, latest commit number of current branch)
+  a repository always has atleast 1 HEAD.
+- clone
+- origin (remoteurl)
+- push (send modifications to remote repo)
+- fetch (gets modifications from remote but doesn't merge automatically)
+- pull = fetch + merge
