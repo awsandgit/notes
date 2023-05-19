@@ -1,0 +1,72 @@
+#+title: Ansible
+
+
+* Config Management with Ansible
++ simple to use than chef,puppet or saltstack
++ can make changes to thousands of servers at once.
++ scaling new servers becomes easier with ansible
++ keeps records of all changes
+
+* Infrastructure as Code
++ for transparency and uniformity
+
+* Ansible
++ uses push approach
++ use YAML(yet another markup language)
++ uses openssh and winRM
++ agentless
++ connects to nodes and pushes out modules(small programs)
++ uses playbooks
++ contains plays- set of instructions to automate somthing
++ Inventoy
+  - ansible uses inventory file to group machines
++ API
+  - python api for cli
++ users> Cloud > Host + Network
+
++ https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
+
+** Inventory creation on ansible
++ In /etc/ansible/hosts
+     [localsever]
+      localhost
+
+     [jenkinsmaster]
+      public_ip1
+
+     [jenkinslave]
+      public_ip2
+
+     [allservers]
+      localhost
+      public_ip1
+      public_ip2
+
+** ansible commands
+- ansible -m ping localserver
+- ansible-playbook node.yaml
+- ansible-galaxy -h
+- ansible-galaxy init rolename1 (will generate a directory named rolename1)
+
+
+
+*** YAML format
+#+begin_src yaml
+---
+- hosts: all
+  become_user: jenkins
+  become_method: su
+  vars:
+    region: Northeast
+  tasks:
+  - name: add apt key for nodesource
+    become: true
+    apt_repository:
+      repo: '' main
+
+  - name: install nodejs
+    become: true
+    apt: name=nodejs
+
+...
+#+end_src

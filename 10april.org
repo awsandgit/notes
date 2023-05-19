@@ -37,6 +37,8 @@ token: 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
 - git push -d remotename branchname (to delete remote branch)
 - git remote update origin
 - git checkout -b newbranch HEAD~4 (4commits prior from head)
+- git rebase base-name (e.g git rebase master)
+- git revert HEAD
 
 ** git buzzwords:
 - master (default/main branch)
@@ -70,3 +72,7 @@ token: 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
 - annotated
 - git tag -a v1.4 -m "comment"
 - git tag v1.4-1w
+
+
+- Autoscaling group add to pm2 loadbalancer
+- code pipeline test
