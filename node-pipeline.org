@@ -52,19 +52,18 @@ phases:
         runtime-versions:
             nodejs: 18
         commands:
-            - echo "📦 installing packages..."
+            - echo "installing packages..."
     pre_build:
         commands:
-            - echo "✅ Tests passed successfully."
+            - echo "Tests passed successfully."
     build:
         commands:
-            - echo "✅ Build passed successfully."
+            - echo "Build passed successfully."
     post_build:
         commands:
-            - echo "🚚 Performing post-build packing and operations..."
+            - echo "Performing post-build packing and operations..."
             - aws deploy push --application-name nodejs-app-ip --s3-location s3://node-deploy-revisions/development/source.zip --ignore-hidden-files --region us-east-1
             - aws deploy create-deployment --application-name nodejs-app-ip --s3-location bucket=node-deploy-revisions,key=development/source.zip,bundleType=zip,eTag=cba5c295675e5e40424f5e1dc2e3c78a,version=Dnm9KYFJH3bdh2_wZSYLII91DDIFskuK --deployment-group-name node-hello-group --deployment-config-name CodeDeployDefault.AllAtOnce --description "Deploying from s3 bucket to ec2"
-            - echo "✅ Post build successful"
 
 artifacts:
   files:
@@ -72,3 +71,49 @@ artifacts:
   name: deploy-nodejs-build-artifacts
 
 #+end_src
+
+** install code-deploy agent on instances:
+*** On ubuntu/debian servers:
+#+begin_src bash
+#!/bin/bash
+BUCKET_NAME="aws-codedeploy-us-east-1"
+REGION_IDENTIFIER="us-east-1"
+sudo apt update
+sudo apt install ruby-full -y
+sudo apt install wget -y
+cd /tmp
+wget "https://${BUCKET_NAME}.s3.${REGION_IDENTIFIER}.amazonaws.com/latest/install"
+chmod +x ./install
+sudo ./install auto
+sudo systemctl start codedeploy-agent
+#+end_src
+
+*** On Amazon Linux/Redhat servers:
+#+begin_src bash
+#!/bin/bash
+BUCKET_NAME="aws-codedeploy-us-east-1"
+REGION_IDENTIFIER="us-east-1"
+sudo yum update
+sudo yum install ruby -y
+sudo yum install wget -y
+cd /tmp
+wget "https://${BUCKET_NAME}.s3.${REGION_IDENTIFIER}.amazonaws.com/latest/install"
+chmod +x ./install
+sudo ./install auto
+sudo service codedeploy-agent start
+#+end_src
+
+** Install nodejs on instances:
+
+*** AMI: ami-053b0d53c279acc90 ubuntu_ami
+*** On ubuntu servers:
+#+begin_src bash
+#!/bin/bash
+sudo apt update
+sudo apt install curl -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+#+end_src
+
+*** add key through keyring if required
+- curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /usr/share/keyrings/nodesource.gpg >/dev/null

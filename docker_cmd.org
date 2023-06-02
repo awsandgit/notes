@@ -1,0 +1,26 @@
+* Docker-commands
+    - docker build .
+    - docker images -A
+    - docker run -d -p 80:80 #imageID
+    - docker tag #imageID username/ubuntu:latest 
+    - docker push username/ubuntu:latest 
+    - docker pull username/ubuntu:latest
+    - docker ps
+    - docker image ls
+    
+* Docker-compose
+    - uses docker-compose.yml
+    - docker-compose build
+    - docker-compose run
+    - docker-compose up
+    - docker-compose down
+
+* Orchestration in Docker
+    - Docker-Swarm, comprises of three types of nodes
+        - Manager
+        - Leader
+        - Workers
+
+* rds db in vpc2
+- root
+- root1234
