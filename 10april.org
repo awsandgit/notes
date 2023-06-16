@@ -26,12 +26,19 @@
 - git config -l
 - git clone repourl
 - git remote add origin remoteurl.git
-  token: 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
+token: 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
 - git branch (to see branches)
 - git branch newbranch
 - git checkout newbranch
 - git reset HEAD filename (to unstage a file)
 - git branch -a
+- git branch -d (for local deletion)
+- git branch -D (for force local deletion)
+- git push -d remotename branchname (to delete remote branch)
+- git remote update origin
+- git checkout -b newbranch HEAD~4 (4commits prior from head)
+- git rebase base-name (e.g git rebase master)
+- git revert HEAD
 
 ** git buzzwords:
 - master (default/main branch)
@@ -43,3 +50,29 @@
 - push (send modifications to remote repo)
 - fetch (gets modifications from remote but doesn't merge automatically)
 - pull = fetch + merge
+
+** Merge Conflicts
++ git log --merge (list of conficting commits)
++ git reset --mixed (undo changes)
++ git merge --abort (exit merge)
++ git reset (to reset disputed files)
+
+** Stashing
++ creates a checkpoint for non-committed changes.
++ saves all the changes to temp location.
++ stash pop or stash apply (reapply stash changes)
+- git stash
+- git stash list
+- git show stash
+
+** Git Tag
++ can tag specific points in history.
+*** Types:
+- lightweight
+- annotated
+- git tag -a v1.4 -m "comment"
+- git tag v1.4-1w
+
+
+- Autoscaling group add to pm2 loadbalancer
+- code pipeline test

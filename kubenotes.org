@@ -1,0 +1,205 @@
+#+title: Kubenotes
+
+
+* Create an EKS cluster
+** Create an IAM role for the cluster first
+*** Using AWS Console
+- Go to IAM console, search for EKS and select EKS cluster
+- no need to attach any additional policy.
+
+*** Using AWS CLI
+- create a policy using this command:
+#+begin_src bash
+cat >eks-cluster-role-trust-policy.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "eks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+#+end_src
+- create a role with the above policy and attach a eks policy:
+#+begin_src bash
+aws iam create-role --role-name myAmazonEKSClusterRole --assume-role-policy-document file://"eks-cluster-role-trust-policy.json"
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy --role-name myAmazonEKSClusterRole
+#+end_src
+
+** Create an EKS cluster using that IAM role
+- with the AWS console, just fill the form.
+- with AWS CLI:
+#+begin_src bash
+aws eks create-cluster --region region-code --name my-cluster --kubernetes-version 1.27 \
+   --role-arn arn:aws:iam::111122223333:role/myAmazonEKSClusterRole \
+   --resources-vpc-config subnetIds=subnet-ExampleID1,subnet-ExampleID2,securityGroupIds=sg-ExampleID1
+
+#to check the status
+aws eks describe-cluster --region region-code --name my-cluster --query "cluster.status"
+#+end_src
+
+** Create nodes by creating a managed node group
+*** Create an IAM role for the managed nodes
+- Attach these policies to that role:
+  + AmazonEKSWorkerNodePolicy
+  + AmazonEC2ContainerRegistryReadOnly
+  + AmazonEKS_CNI_Policy
+
+*** Using AWS Console
+- go to your created EKS cluster
+- select the compute tab
+- choose add node group and follow the instructions
+- choose the tier and type of instance on the nodes and security group.
+
+* Configuring kubectl and aws cli on local machine
+** Create an IAM user
+- Give admin policy or policies restricted for only using k8s to that user
+- Generate Access Keys for that user
+- On your local machine, install latest version of aws cli
+- for linux-x86_64:
+#+begin_src bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+#+end_src
+- install latest version of kubectl
+- for linux:
+#+begin_src bash
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.1/2023-04-19/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
+kubectl version --short --client
+#+end_src
+
+** Configure the AWS CLI
+- run this command and enter your access and secret access key and aws well as the region your cluster is in
+#+begin_src bash
+aws configure
+#confirm your identity
+aws sts get-caller-identity
+
+#below command will generate a k8s config file for you:
+aws eks update-kubeconfig --region region-code --name my-cluster
+
+#verify the clusters using kubectl
+kubectl get svc
+#+end_src
+
+- If you get an error, try replacing v1alpha1 to v1beta1 in the $HOME/.kube/config file
+- If it's a credential error, be sure to use same IAM user that you created the cluster with on the cli
+- If it's a different user, attach the sts:assumeRole policy document to it.
+- Refer to this document: [[https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html][give access to k8s nodes]]
+
+* Deploy a Sample Application on the cluster
+** Requirements
+- EKS cluster with atleast 1 node
+- kubectl configured
+
+** Create a namespace
+#+begin_src bash
+kubectl create namespace myns
+#+end_src
+
+** Create a k8s deployment
+*** create a deployment by creating manifest1.yaml file
+- Enter the following contents to it:
+#+begin_src yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydeployment
+  namespace: myns
+  labels:
+    app: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+      containers:
+      - name: nginx
+        image: public.ecr.aws/nginx/nginx:1.21
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
+#+end_src
+
+- Apply this manifest file
+#+begin_src bash
+kubectl apply -f manifest1.yaml
+#+end_src
+
+*** Create a service
+- create myservice.yaml and paste the below in it:
+#+begin_src yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+  namespace: myns
+  labels:
+    app: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+#+end_src
+
+*** Apply and view the resources inside the namespace
+#+begin_src bash
+kubectl apply -f myservice.yaml
+
+#list the resources in myns namespace
+kubectl get all -n myns
+
+#verify the service
+kubectl -n myns describe service myservice
+
+#Go inside the pod deployment and verify the webserver is running
+kubectl exec -it mydeployment-65b7669776-m6qxz -n myns -- /bin/bash
+curl myservice
+
+#replacing 65b7669776-m6qxz with your deployment id
+#outside the pod, check your pods and deployment name and status using
+kubectl get pods -n myns
+kubectl get deploy -n myns
+#+end_src
+
+- Expose to public using a loadbalancer:
+#+begin_src bash
+kubectl expose deployment mydeployment --type=LoadBalancer --name=my-service -n myns
+
+#verify the service
+kubectl get services my-service -n myns
+#more details about the service
+kubectl describe services my-service -n myns
+
+#go to the external ip provide by the above command in the browser with the port 80
+#+end_src

@@ -1,0 +1,119 @@
+#+title: Node Pipeline
+
+
+* Preparation for creating a pipeline to auto-deploy a nodejs-application ec2-instances
+** On your development machine/instance
++ install aws cli
++ create an IAM user, if you installed aws cli on your local machine
++ attach 'admininstrator privileges' policy to that user
++ generate access keys in the security tab
++ run: aws configure
++ enter your access and secret key to start using aws cli as your IAM user
+
+** Make a S3 Bucket to store revisions of your code
+- make a s3 bucket via console or via cli like this:
+  - aws s3 mb s3://node-revisions-store --region us-east-1
+- enable versioning on that bucket via conosle or via cli like this:
+  - aws s3api put-bucket-versioning --bucket node-revisions-store  --
+-
+
+*** Now, get your nodejs-code on this machine and :
++ add an appspec.yml file:
+#+begin_src YAML
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/myapp
+    overwrite: true
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
+
+  ValidateService:
+    - location: scripts/validate_service.sh
+      timeout: 300
+
+#+end_src
+
++ add a buildspec.yml file:
+#+begin_src YAML
+version: 0.2
+
+phases:
+    install:
+        runtime-versions:
+            nodejs: 18
+        commands:
+            - echo "installing packages..."
+    pre_build:
+        commands:
+            - echo "Tests passed successfully."
+    build:
+        commands:
+            - echo "Build passed successfully."
+    post_build:
+        commands:
+            - echo "Performing post-build packing and operations..."
+            - aws deploy push --application-name nodejs-app-ip --s3-location s3://node-deploy-revisions/development/source.zip --ignore-hidden-files --region us-east-1
+            - aws deploy create-deployment --application-name nodejs-app-ip --s3-location bucket=node-deploy-revisions,key=development/source.zip,bundleType=zip,eTag=cba5c295675e5e40424f5e1dc2e3c78a,version=Dnm9KYFJH3bdh2_wZSYLII91DDIFskuK --deployment-group-name node-hello-group --deployment-config-name CodeDeployDefault.AllAtOnce --description "Deploying from s3 bucket to ec2"
+
+artifacts:
+  files:
+    - '**/*'
+  name: deploy-nodejs-build-artifacts
+
+#+end_src
+
+** install code-deploy agent on instances:
+*** On ubuntu/debian servers:
+#+begin_src bash
+#!/bin/bash
+BUCKET_NAME="aws-codedeploy-us-east-1"
+REGION_IDENTIFIER="us-east-1"
+sudo apt update
+sudo apt install ruby-full -y
+sudo apt install wget -y
+cd /tmp
+wget "https://${BUCKET_NAME}.s3.${REGION_IDENTIFIER}.amazonaws.com/latest/install"
+chmod +x ./install
+sudo ./install auto
+sudo systemctl start codedeploy-agent
+#+end_src
+
+*** On Amazon Linux/Redhat servers:
+#+begin_src bash
+#!/bin/bash
+BUCKET_NAME="aws-codedeploy-us-east-1"
+REGION_IDENTIFIER="us-east-1"
+sudo yum update
+sudo yum install ruby -y
+sudo yum install wget -y
+cd /tmp
+wget "https://${BUCKET_NAME}.s3.${REGION_IDENTIFIER}.amazonaws.com/latest/install"
+chmod +x ./install
+sudo ./install auto
+sudo service codedeploy-agent start
+#+end_src
+
+** Install nodejs on instances:
+
+*** AMI: ami-053b0d53c279acc90 ubuntu_ami
+*** On ubuntu servers:
+#+begin_src bash
+#!/bin/bash
+sudo apt update
+sudo apt install curl -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+#+end_src
+
+*** add key through keyring if required
+- curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /usr/share/keyrings/nodesource.gpg >/dev/null
