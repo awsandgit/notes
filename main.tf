@@ -8,7 +8,7 @@ terraform {
 
 }
 
-provider "aws" {:qy
+provider "aws" {
          region = "us-east-1"
          access_key = "IAM-user-key"
          secret_key = "supersecretkey"

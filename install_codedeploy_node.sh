@@ -10,6 +10,8 @@ wget "https://${BUCKET_NAME}.s3.${REGION_IDENTIFIER}.amazonaws.com/latest/instal
 chmod +x ./install
 sudo ./install auto
 sudo systemctl start codedeploy-agent
+
+#nodejs
 sudo apt install curl -y
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs
