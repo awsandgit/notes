@@ -12,9 +12,9 @@ aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
     --policy-document file://iam_policy.json
 
-oidc_id=$(aws eks describe-cluster --name my-cluster --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+oidc_id=$(aws eks describe-cluster --name $clustername --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 
-oid=$(aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4 | sed 's/"//')
+oid=$(aws iam list-open-id-connect-providers | grep "$oidc_id" | cut -d "/" -f4 | sed 's/"//')
 
 cat >load-balancer-role-trust-policy.json <<EOF
 {
