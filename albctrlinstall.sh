@@ -1,8 +1,20 @@
 #!/bin/bash
 
+# ____  ____
+#|  _ \/ ___|
+#| |_) \___ \
+#|  _ < ___) |
+#|_| \_\____/
+#
+#----Change Values Below accoding to your aws account----
+#AWS_accountID
 acid=11233445343
+#regionCode
 region=ap-south-1
+#ClusterName_Below
 clustername=eks-cluseter
+
+#---------Change Above-------------
 
 #curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.7/docs/install/iam_policy_us-gov.json
 
