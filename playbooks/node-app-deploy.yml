@@ -1,0 +1,25 @@
+- hosts: ubuntu_slaves
+  become: yes
+  tasks:
+    - name: copy built files to deploy-server
+      synchronize:
+        src: /var/lib/jenkins/workspace/node-pipeline1/build/
+        dest: /var/www/my-app/
+        delete: true
+        recursive: true
+
+    - name: change-owner
+      file:
+        path: /var/www/my-app/
+        owner: ubuntu
+        group: ubuntu
+        recurse: yes
+        state: directory
+
+    - name: start node
+      shell: 
+        chdir: /var/www/my-app/
+        cmd: /bin/bash startnode.sh
+      become: yes
+
+  

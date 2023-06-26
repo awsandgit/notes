@@ -1,0 +1,23 @@
+---
+- hosts: ubuntu_slaves
+  become: true
+  tasks:
+    - name: install apache
+      apt:
+        name: apache2
+        state: latest
+        update_cache: yes
+
+    - name: copy index.html to remote-servers
+      copy:
+        src: myindex.html
+        dest: /var/www/html/index.html
+        mode: 0644
+        owner: root
+        group: root
+
+    - name: restart service
+      systemd:
+        name: apache2
+        state: restarted
+        enabled: yes

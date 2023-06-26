@@ -5,17 +5,20 @@
 ** On your development machine/instance
 + install aws cli
 + create an IAM user, if you installed aws cli on your local machine
-+ attach 'admininstrator privileges' policy to that user
++ attach 'administrator privileges' policy to that user
 + generate access keys in the security tab
 + run: aws configure
 + enter your access and secret key to start using aws cli as your IAM user
 
 ** Make a S3 Bucket to store revisions of your code
 - make a s3 bucket via console or via cli like this:
-  - aws s3 mb s3://node-revisions-store --region us-east-1
+#+begin_src bash
+aws s3 mb s3://node-revisions-store --region us-east-1
+#+end_src
 - enable versioning on that bucket via conosle or via cli like this:
-  - aws s3api put-bucket-versioning --bucket node-revisions-store  --
--
+#+begin_src bash
+aws s3api put-bucket-versioning --bucket node-revisions-store  --
+#+end_src
 
 *** Now, get your nodejs-code on this machine and :
 + add an appspec.yml file:
@@ -116,4 +119,6 @@ sudo apt install -y nodejs
 #+end_src
 
 *** add key through keyring if required
-- curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /usr/share/keyrings/nodesource.gpg >/dev/null
+#+begin_src
+curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /usr/share/keyrings/nodesource.gpg >/dev/null
+#+end_src

@@ -12,6 +12,8 @@ aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
     --policy-document file://iam_policy.json
 
+echo "Press Enter to Proceed..."
+
 oidc_id=$(aws eks describe-cluster --name $clustername --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 
 oid=$(aws iam list-open-id-connect-providers | grep "$oidc_id" | cut -d "/" -f4 | sed 's/"//')
@@ -37,13 +39,14 @@ cat >load-balancer-role-trust-policy.json <<EOF
 }
 EOF
 
+echo "Press Enter to Proceed..."
 aws iam create-role \
-  --role-name AmazonEKSLoadBalancerControllerRole \
-  --assume-role-policy-document file://"load-balancer-role-trust-policy.json"
+    --role-name AmazonEKSLoadBalancerControllerRole \
+    --assume-role-policy-document file://"load-balancer-role-trust-policy.json"
 
 aws iam attach-role-policy \
-  --policy-arn arn:aws:iam::$acid:policy/AWSLoadBalancerControllerIAMPolicy \
-  --role-name AmazonEKSLoadBalancerControllerRole
+    --policy-arn arn:aws:iam::$acid:policy/AWSLoadBalancerControllerIAMPolicy \
+    --role-name AmazonEKSLoadBalancerControllerRole
 
 cat >aws-load-balancer-controller-service-account.yaml <<EOF
 apiVersion: v1
@@ -58,12 +61,15 @@ metadata:
     eks.amazonaws.com/role-arn: arn:aws:iam::$acid:role/AmazonEKSLoadBalancerControllerRole
 EOF
 
+echo "Press Enter to Proceed..."
 kubectl apply -f aws-load-balancer-controller-service-account.yaml
 
+echo "Press Enter to Proceed..."
 kubectl apply \
     --validate=false \
     -f https://github.com/jetstack/cert-manager/releases/download/v1.5.4/cert-manager.yaml
 
+echo "Press Enter to Proceed..."
 curl -Lo v2_4_7_full.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.4.7/v2_4_7_full.yaml
 
 sed -i.bak -e '561,569d' ./v2_4_7_full.yaml
@@ -72,9 +78,9 @@ sed -i.bak -e "s|your-cluster-name|$clustername|" ./v2_4_7_full.yaml
 
 kubectl apply -f v2_4_7_full.yaml
 
+echo "Press Enter to Proceed..."
 curl -Lo v2_4_7_ingclass.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.4.7/v2_4_7_ingclass.yaml
 
 kubectl apply -f v2_4_7_ingclass.yaml
 
 kubectl get deployment -n kube-system aws-load-balancer-controller
-

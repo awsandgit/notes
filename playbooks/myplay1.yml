@@ -1,0 +1,48 @@
+---
+- hosts: all
+  become: true
+  name: update-packages
+
+  tasks:
+    - name: update using apt
+      apt:
+        update_cache: yes
+
+
+- hosts: slaves
+  become: true
+  name: play-to-install-and-start-apache
+
+  tasks:
+  - name: Ensure apache is at the latest version
+    apt:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - apache2
+      - mysql-server
+      - vim
+
+  - name: start these services
+    systemd:
+      name: "{{ item }}"
+      state: started
+      enabled: no
+    with_items:
+      - apache2
+      - mysql
+
+
+- hosts: 10.200.1.254
+  become: true
+  name: copy-files
+
+  tasks:
+  - name: cp file from srv1 to srv2
+    copy:
+      src: /home/ec2-user/nodejs-code/Jenkinsfile
+      dest: /home/ubuntu/Jenkinsfile
+      mode: 0400
+      owner: ubuntu
+      group: ubuntu
+

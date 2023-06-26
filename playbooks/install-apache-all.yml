@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: true
+  name: play-for-ubuntu-or-debian
+  tasks:
+    - name: install apache
+      apt:
+        name: apache2
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian" 
+
+
+- hosts: all
+  name: play-for-redhat or amazon linux
+  become: true
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "Amazon" or ansible_distribution == "CentOS" 
+
+    - name: restart service httpd
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Amazon" or ansible_distribution == "CentOS" 
+
