@@ -1,3 +1,14 @@
+#+title: Terraform
+
+** Basic terraform commands
+- terraform init
+- terraform validate
+- terraform plan
+- terraform apply
+- terraform destroy
+
+** main.tf
+#+begin_src json
 terraform {
 
           required_providers {:
@@ -22,10 +33,4 @@ resource "aws_instance" my-ec2-instance {
               Name = "rohit-ec2"
               }
 }
-
-
-- terraform init
-- terraform validate
-- terraform plan
-- terraform apply
-- terraform destroy
+#+end_src

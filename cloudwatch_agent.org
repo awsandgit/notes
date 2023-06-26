@@ -1,6 +1,6 @@
 #+title: Cloudwatch Agent
 
-* Cloudwatch_agent
+*
 
 ** Install cloudwatch agent
 #+begin_src bash

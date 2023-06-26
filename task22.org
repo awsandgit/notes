@@ -1,7 +1,0 @@
-create vpc
-private subnet intance with webserver
-acess with loadbalancer
-
-another server in private
-check loadbalancer if content is different
-
