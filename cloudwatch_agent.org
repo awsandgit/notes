@@ -1,12 +1,18 @@
-#!/bin/bash
+#+title: Cloudwatch Agent
 
+* Cloudwatch_agent
+
+** Install cloudwatch agent
+#+begin_src bash
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+
 sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s
+#+end_src
 
-/opt/aws/amazon-cloudwatch-agent/bin/config.json
-
+** Create a new config at:
+- /opt/aws/amazon-cloudwatch-agent/bin/config.json
+#+begin_src json
 {
      "agent": {
          "run_as_user": "root"
@@ -25,3 +31,10 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-c
          }
      }
  }
+
+#+end_src
+
+** Restart the agent with the new config
+#+begin_src bash
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s
+#+end_src
