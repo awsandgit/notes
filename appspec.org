@@ -2,7 +2,7 @@
 
 
 ** Appspec for CodeDeploy Agent
-- Scripts depends on the type of project to be deployed
+- Scripts depend on the type of project to be deployed
 
 ** Sample Appspec.yml
 #+begin_src yaml
