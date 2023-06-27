@@ -1,0 +1,92 @@
+#+title: Buildspec
+
+
+** Buildspec for node project
+#+begin_src yaml
+version: 0.2
+
+phases:
+    install:
+        runtime-versions:
+            nodejs: 18
+        commands:
+            - echo "installing packages..."
+            - npm i
+    pre_build:
+        commands:
+            - echo "Tests passed successfully."
+    build:
+        commands:
+            - echo "Build passed successfully."
+            - npm run build
+            - zip -r source.zip build/
+    post_build:
+        commands:
+            - echo "Post build successful"
+
+artifacts:
+  files:
+    - source.zip
+  name: node-build-artifacts
+#+end_src
+
+** Buildspec for Docker ECS
+#+begin_src yaml
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/r8u4k8a1
+  build:
+    commands:
+      - echo Building Docker image...
+      - docker build -t nodeimages .
+      - echo Pushing Docker image to ECR...
+      - docker tag nodeimages:latest public.ecr.aws/r8u4k8a1/nodeimages:latest
+      - docker push public.ecr.aws/r8u4k8a1/nodeimages:latest
+  post_build:
+    commands:
+      - echo Build completed on date
+      - echo Creating image definitions file...
+      - echo '[{"name":"rohitnodeapp","imageUri":"public.ecr.aws/r8u4k8a1/nodeimages","containerPort":3000}]' > imagedefinitions.json
+
+artifacts:
+  files: imagedefinitions.json
+#+end_src
+
+** Buildspec for angular-website
+#+begin_src yaml
+version: 0.2
+env:
+  variables:
+    S3_BUCKET: "angular-site-first"
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      - npm install --legacy-peer-deps
+      - npm install -g @angular/cli
+  build:
+    commands:
+      - echo Build started on `date`
+      - ng build --configuration production --aot
+  post_build:
+     commands:
+      - aws s3 rm s3://${S3_BUCKET} --recursive
+      - aws s3 sync dist s3://${S3_BUCKET}
+      - echo Build completed on `date`
+      - aws cloudfront create-invalidation --distribution-id=E3MDQB9X1YF04E --paths '/*'
+artifacts:
+  files:
+      - '**/*'
+  base-directory: 'dist*'
+  discard-paths: yes
+#+end_src

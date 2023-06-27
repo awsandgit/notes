@@ -1,0 +1,49 @@
+#+title: Appspec
+
+
+** Appspec for CodeDeploy Agent
+- Scripts depends on the type of project to be deployed
+
+** Sample Appspec.yml
+#+begin_src yaml
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/myapp
+    overwrite: true
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
+
+  ValidateService:
+    - location: scripts/validate_service.sh
+      timeout: 300
+file_exists_behavior: DISALLOW|OVERWRITE|RETAIN
+#+end_src
+
+** Sample scripts in scripts folder
++ install_dependencies.sh
+#+begin_src bash
+#!/bin/bash
+
+set -e
+apt update -y
+/usr/bin/npm i pm2@latest -g
+mkdir -p /var/www/myapp/
+#+end_src
+
++ start_server.sh
+#+begin_src bash
+#!/bin/bash
+
+cd /var/www/myapp/
+/usr/bin/pm2 reload mynodeapp 2>/dev/null || /usr/bin/pm2 start ecosystem.config.js
+#+end_src
