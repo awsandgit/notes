@@ -1,9 +1,11 @@
 #+title: Readme
 
 ** Notes Exist here
-+ [[file:ansible.org][ansible]]
-+ [[file:cloudwatch_agent.org][cloudwatch_agent]]
-+ [[file:install_codedeploy_node.sh][code-deploy_agent]]
-+ [[file:node-pipeline.org][node-pipeline]]
++ [[file:ansible.org][Ansible]]
++ [[file:cloudwatch_agent.org][CloudWatch_agent]]
++ [[file:install_codedeploy_node.sh][CodeDeploy_agent]]
++ [[file:node-pipeline.org][Node-Pipeline]]
 + [[file:albctrlinstall.sh][LoadBalancer_Controller_AWS]]
 + [[file:kubenotes.org][Kubernetes_EKS_basics]]
++ [[file:appspec.org][Appspec.org]]
++ [[file:buildspec.org][Buildspec.org]]
