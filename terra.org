@@ -8,7 +8,7 @@
 - terraform destroy
 
 ** main.tf
-#+begin_src json
+#+begin_src terraform
 terraform {
 
           required_providers {:

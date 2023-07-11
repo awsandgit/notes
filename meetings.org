@@ -1,0 +1,32 @@
+* My Efforts Tracking Sheet | MSP
+
+** DONE [100%] July 10 2023
+- [X] Daily Scrum @ 10:25 AM to 11:35 AM | 1:00H
+- [X] Application LB VS Network LB | 1H
+- [X] Python Scripting | 1H
+
+
+** DONE [100%] July 11 2023
+- [X] Daily Scrum @ 10:15 AM to 11:45 AM | 1:30H
+- [X] BodyShop Troubleshooting | 1H
+- [X] Server-Side Rendering on NextJS | 1H
+- [X] GitLab Certification Process | 1H
+- [X] ALB and NLB access logs on S3
+- [X] Handover meeting | 15MIN
+
+** TODO [%] July 12 2023
+- [ ]
+
+** Efforts table
+|------------+-----------------------------------+------------|
+| Date       | Tasks/Meetings done               | Time Spent |
+|------------+-----------------------------------+------------|
+| 10/07/2023 | Application LB VS Network LB      | 1H         |
+| 10/07/2023 | Python Scripting                  | 1H         |
+| 10/07/2023 | Meetings(Daily Scrum + Handovers) | 2H         |
+| 11/07/2023 | Meetings(Daily Scrum + Handovers) | 2.5H       |
+| 11/07/2023 | Server-side Rendering NextJS      | 1H         |
+| 11/07/2023 | GitLab Certification Process      | 1H         |
+| 11/07/2023 | ALB and NLB Access logs on S3     | 1H         |
+| 12/07/2023 |                                   |            |
+|------------+-----------------------------------+------------|

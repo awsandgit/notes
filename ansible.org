@@ -18,11 +18,11 @@
 + connects to nodes and pushes out modules(small programs)
 + uses playbooks
 + contains plays- set of instructions to automate somthing
-+ Inventoy
++ Inventory
   - ansible uses inventory file to group machines
 + API
   - python api for cli
-+ users> Cloud > Host + Network
++ | users | Cloud | Host + Network |
 
 + https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
 

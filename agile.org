@@ -1,0 +1,26 @@
+#+title: Agile
+
+* Scrum
+** Values
++ Commitment
++ Focus
++ Openness
++ Respect
++ Courage
+
+** Scrum team
++ Developer
++ Product Owner
++ Scrum Master
+
+** Events
++ Sprint
++ Sprint Planning
++ Daily Scrum
++ Sprint Review
++ Sprint Retrospective
+
+** Scrum Artefacts
++ Product Backlog
++ Sprint Backlog
++ Increment
