@@ -17,7 +17,7 @@ aws s3 mb s3://node-revisions-store --region us-east-1
 #+end_src
 - enable versioning on that bucket via conosle or via cli like this:
 #+begin_src bash
-aws s3api put-bucket-versioning --bucket node-revisions-store  --
+aws s3api put-bucket-versioning --bucket node-revisions-store  --region us-east-1
 #+end_src
 
 *** Now, get your nodejs-code on this machine and :
@@ -123,6 +123,24 @@ sudo apt install -y nodejs
 curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /usr/share/keyrings/nodesource.gpg >/dev/null
 #+end_src
 
+* Blue-Green Deployment
+** Steps for Bluegreen Deployment:
+- Create an AMI with all dependencies:
+  + For a node-app:
+    - CodeDeploy Agent
+    - NodeJS relevent version
+    - pm2
+- Use the AMI to create a launch template with an appropriate IAM role
+  + Policy needed for the ec2-instance where code is to be deployed:
+    - AmazonEC2RoleforAWSCodeDeploy
+- Create target groups without attaching any instance:
+  + Configure the port where your node app is running
+  + Create a Load Balancer and attach those target groups
+- Create an Auto Scaling Group (ASG) using the launch template
+  + Use the load balancer configured earlier
+- Create an application on the AWS CodeDeploy console
+  + Create a deployment Group in that application and select the ASG and ALB created earlier.
+
 ** For Blue-green deployment using a launch template with ASG:
 - On codeDeploy role, attach policy:
 - AWSCodeDeployRole
@@ -145,5 +163,3 @@ curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | t
 }
 #+end_src
 
-** Policy needed for the ec2-instance where code is to be deployed:
-- AmazonEC2RoleforAWSCodeDeploy
