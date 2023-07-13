@@ -122,3 +122,28 @@ sudo apt install -y nodejs
 #+begin_src
 curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /usr/share/keyrings/nodesource.gpg >/dev/null
 #+end_src
+
+** For Blue-green deployment using a launch template with ASG:
+- On codeDeploy role, attach policy:
+- AWSCodeDeployRole
+- add this policy to avoid permission issue to the CodeDeploy role:
+#+begin_src json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole",
+                "ec2:CreateTags",
+                "ec2:RunInstances"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+#+end_src
+
+** Policy needed for the ec2-instance where code is to be deployed:
+- AmazonEC2RoleforAWSCodeDeploy
