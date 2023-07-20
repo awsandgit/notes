@@ -10,4 +10,3 @@
 + [[file:appspec.org][Appspec]]
 + [[file:buildspec.org][Buildspec]]
 + [[file:jenkins.org][Jenkins]]
-+ [[file:install_codedeploy_node.sh][Install_codedeploy_node_script]]
