@@ -122,6 +122,7 @@ pipeline {
 #+end_src
 
 ** Using AWS SES with Jenkins for alert transmission:
+- Both the sender and receivers email-ids must be verified on SES.
 *** On AWS console
 + Go to SES dashboard
 + Create verified entity using an email.
@@ -139,6 +140,7 @@ pipeline {
 + Save
 
 ** Using personal Gmail for alerts:
+- If you use a personal gmail, you can send mails to anyone without the need of verification.
 *** On your gmail account:
 + Enable 2 Factor Authentication(2FA) if not already enabled.
 + Go to the 2FA dashboard from Manage your Google Account > Under Security
