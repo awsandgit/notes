@@ -101,21 +101,17 @@ pipeline {
         stage('Hello') {
             steps {
                 echo "Hello World"
-                echo "This pipeline will fail due to the statement below"
-                exit 1
             }
         }
     }
     post {
         success {
-            echo 'I succeeded!'
+        emailext attachLog: true,
+            body: '''Success''', subject: "Job succeeded: ${currentBuild.fullDisplayName}", to: 'recepient@gmail.com'
         }
         failure {
-        emailext attachLog:true,
-            body: '''Hi,
-                            This Job has failed.
-                            Please check $BUILD_URL
-        ''', subject: "Job failed: ${currentBuild.fullDisplayName}", to: 'recepient@gmail.com'
+        emailext attachLog: true,
+            body: '''Failed''', subject: "Job failed: ${currentBuild.fullDisplayName}", to: 'recepient@gmail.com'
         }
     }
 }
