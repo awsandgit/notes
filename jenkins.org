@@ -49,6 +49,7 @@ systemctl status jenkins
 + Scroll to Email-Extended Notification
 + Add your instance-ip where mailhog is running
 + Use 1025 as smtp-port value
++ Tick the USE SSL checkbox
 + Save
 
 *** Create a test Pipeline
@@ -91,7 +92,7 @@ systemctl status jenkins
 
 + Official documentation [[https://www.jenkins.io/doc/pipeline/tour/post/][here]]
 
-*** Sample test pipeline:
+*** Sample test pipeline that sends logs of the build with the email when it fails:
 #+begin_src groovy
 pipeline {
     agent any
@@ -110,12 +111,45 @@ pipeline {
             echo 'I succeeded!'
         }
         failure {
-        emailext body: '''Hi,
+        emailext attachLogs:true,
+            body: '''Hi,
                             This Job has failed.
                             Please check $BUILD_URL
         ''', subject: "Job failed: ${currentBuild.fullDisplayName}", to: 'recepient@gmail.com'
         }
     }
 }
-
 #+end_src
+
+** Using AWS SES with Jenkins for alert transmission:
+*** On AWS console
++ Go to SES dashboard
++ Create verified entity using an email.
++ Check your email and verify
++ Generate SMTP Credentials and download those creds.
++ Note down the SES endpoint.
+
+*** On Jenkins Dashboard
++ Go to "Manage Jenkins" > "System"
++ Scroll to Email-Extended Notification
++ Add your SES Endpoint in SMTP SERVER field and add the creds you downloaded(Username:Access Key, Password:Secret Key)
++ Use 465 as smtp-port value
++ Tick the USE SSL checkbox
++ Also Look for System-admin-email field and add the sender email there. It must be already verified on SES.
++ Save
+
+** Using personal Gmail for alerts:
+*** On your gmail account:
++ Enable 2 Factor Authentication(2FA) if not already enabled.
++ Go to the 2FA dashboard from Manage your Google Account > Under Security
++ Scroll Down and look for App passwords
++ Generate an app password by selecting the "OTHERS" category
++ Note down that password(includes spaces)
+
+*** On Jenkins Dashboard
++ Go to "Manage Jenkins" > "System"
++ Scroll to Email-Extended Notification
++ Add "smtp.gmail.com" in SMTP SERVER field and add username:yourgmailid@gmail.com and password that you generated.
++ Use 465 as smtp-port value
++ Tick the USE SSL checkbox
++ Save
