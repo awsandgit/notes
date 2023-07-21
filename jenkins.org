@@ -111,7 +111,7 @@ pipeline {
             echo 'I succeeded!'
         }
         failure {
-        emailext attachLogs:true,
+        emailext attachLog:true,
             body: '''Hi,
                             This Job has failed.
                             Please check $BUILD_URL
