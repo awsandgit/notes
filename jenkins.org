@@ -26,43 +26,40 @@ systemctl status jenkins
 #you can also find the password at /var/lib/jenkins/secrets/initialAdminPassword
 #+end_src
 
-** Configuring email alerts:
-*** Requirements
-+ SMTP Server configured and running, OR,
-+ Organizational Gmail Account:
-  - with less secure apps allowed. Follow this [[https://myaccount.google.com/lesssecureapps][link]].
-  - 2 Factor Auth disabled
+* Configuring email alerts:
 
-*** To configure a SMTP server for testing
-+ Install docker on your Jenkins Instance. Use this [[https://docs.docker.com/engine/install/ubuntu/][link]].
-+ Pull this image from docker. Refer to [[https://hub.docker.com/r/mailhog/mailhog/][this]].
-  #+begin_src bash
-  docker pull mailhog/mailhog
-  # to run the container
-  docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
-  #+end_src
-+ Check your instance-ip on port 8025. http:://instance-ip:8025
-+ You will see a mailhog dashboard. Your mails will come here.
+** Requirements
++ SMTP Server configured and running, OR,
++ A 2FA enabled Gmail Account, OR,
++ [[id:9a137ec1-c9a2-4d9f-92ff-cb23bd778152][AWS SES]]
+
+** Using AWS SES with Jenkins for alert transmission:
+:PROPERTIES:
+:ID:       9a137ec1-c9a2-4d9f-92ff-cb23bd778152
+:END:
+- Both the sender and receivers email-ids must be verified on SES.
+*** On AWS console
++ Go to SES dashboard
++ Create verified entity using an email.
++ Check your email and verify
++ Generate SMTP Credentials and download those creds.
++ Note down the SES endpoint, it will be like: "email-smtp.us-east-1.amazonaws.com"
 
 *** On Jenkins Dashboard
 + Go to "Manage Jenkins" > "System"
 + Scroll to Email-Extended Notification
-+ Add your instance-ip where mailhog is running
-+ Use 1025 as smtp-port value
++ Add your SES Endpoint in SMTP SERVER field and add the creds you downloaded(Username:Access Key, Password:Secret Key)
++ Use 465 as smtp-port value
 + Tick the USE SSL checkbox
++ Also Look for System-admin-email field and add the sender email there. It must be already verified on SES.
 + Save
 
-*** Create a test Pipeline
+** Create a test Pipeline
 + In the script, after stage add this section:
 #+begin_src groovy
     post {
         failure {
-        emailext body: '''Hi,
-                            I have failed you!!
-                            Check $BUILD_ID
-                            "${JOB_NAME}"
-                            $BUILD_URL
-        Jenkins-slave''', subject: "Job failed: ${currentBuild.fullDisplayName}", to: 'fuc496k@gmail.com'
+        emailext body: ''' Check $BUILD_URL ''', subject: "${PROJECT_NAME} - Build # ${BUILD_NUMBER} - ${BUILD_STATUS}!", to: 'recepient@gmail.com'
         }
     }
 #+end_src
@@ -89,7 +86,6 @@ systemctl status jenkins
         }
     }
 #+end_src
-
 + Official documentation [[https://www.jenkins.io/doc/pipeline/tour/post/][here]]
 
 *** Sample test pipeline that sends logs of the build with the email when it fails:
@@ -117,24 +113,6 @@ pipeline {
 }
 #+end_src
 
-** Using AWS SES with Jenkins for alert transmission:
-- Both the sender and receivers email-ids must be verified on SES.
-*** On AWS console
-+ Go to SES dashboard
-+ Create verified entity using an email.
-+ Check your email and verify
-+ Generate SMTP Credentials and download those creds.
-+ Note down the SES endpoint.
-
-*** On Jenkins Dashboard
-+ Go to "Manage Jenkins" > "System"
-+ Scroll to Email-Extended Notification
-+ Add your SES Endpoint in SMTP SERVER field and add the creds you downloaded(Username:Access Key, Password:Secret Key)
-+ Use 465 as smtp-port value
-+ Tick the USE SSL checkbox
-+ Also Look for System-admin-email field and add the sender email there. It must be already verified on SES.
-+ Save
-
 ** Using personal Gmail for alerts:
 - If you use a personal gmail, you can send mails to anyone without the need of verification.
 *** On your gmail account:
@@ -149,5 +127,25 @@ pipeline {
 + Scroll to Email-Extended Notification
 + Add "smtp.gmail.com" in SMTP SERVER field and add username:yourgmailid@gmail.com and password that you generated.
 + Use 465 as smtp-port value
++ Tick the USE SSL checkbox
++ Save
+
+** To configure a SMTP server for testing
++ Install docker on your Jenkins Instance. Use this [[https://docs.docker.com/engine/install/ubuntu/][link]].
++ Pull this image from docker. Refer to [[https://hub.docker.com/r/mailhog/mailhog/][this]].
+  #+begin_src bash
+  docker pull mailhog/mailhog
+  # to run the container
+  docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+  #+end_src
++ Check your instance-ip on port 8025. http:://instance-ip:8025
++ You will see a mailhog dashboard. Your mails will come here.
++ Make sure ports 1025 and 8025 are allowed in the instance security group and firewall.
+
+*** On Jenkins Dashboard
++ Go to "Manage Jenkins" > "System"
++ Scroll to Email-Extended Notification
++ Add your instance-ip where mailhog is running
++ Use 1025 as smtp-port value
 + Tick the USE SSL checkbox
 + Save
