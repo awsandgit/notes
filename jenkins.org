@@ -27,6 +27,8 @@ systemctl status jenkins
 #+end_src
 
 * Configuring email alerts:
+** Aim
++ To set up an Email Notification system on Jenkins through which people involved in the project can be notified when the Jenkins pipeline fails with appropriate information.
 
 ** Requirements
 + SMTP Server configured and running, OR,
