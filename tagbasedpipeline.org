@@ -23,3 +23,20 @@
 - Change the region code, accountID and repositoryName accordingly
 
 - Use AWS code-pipeline ARN in the target
+
+** Create a tag using git cli
+#+begin_src bash
+
+#create a commit after making changes
+git add .
+git commit -m "somechanges"
+
+#set a tag for that commit using the commitHash
+git tag version1 4a5b5d8
+
+#push the tag
+git push origin version1
+
+#verify in the log and on the codecommit console as well
+git log -1
+#+end_src
