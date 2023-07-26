@@ -4,9 +4,10 @@
 - AWS codepipeline
   - codecommit as source
 
-**  Create a new EventBridge Rule:
+** On the AWS EventBridge Console:
 - Disable the default codepipeline rule on AWS EventBridge Console
-
+- [[file:./images/eventbridge4_resized.png]]
+- Create a new AWS EventBridge Rule using the below code:
 #+begin_src json
 {
   "source": ["aws.codecommit"],
@@ -21,8 +22,14 @@
 }
 #+end_src
 - Change the region code, accountID and repositoryName accordingly
-
+- [[file:./images/eventbridge1_resized.png]]
+- select other
+- [[file:./images/eventbridge2_resized.png]]
+- select custom json and paste the above provided code with your changes
+- [[file:./images/eventbridge3_resized.png]]
 - Use AWS code-pipeline ARN in the target
+- [[file:./images/eventbridge5_resized.png]]
+
 
 ** Create a tag using git cli
 #+begin_src bash
