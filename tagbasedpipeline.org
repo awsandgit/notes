@@ -6,7 +6,7 @@
 
 ** On the AWS EventBridge Console:
 - Disable the default codepipeline rule on AWS EventBridge Console
-- [[file:./images/eventbridge4_resized.png]]
+- [[file:./images/pathbased/eventbridge4_resized.png]]
 - Create a new AWS EventBridge Rule using the below code:
 #+begin_src json
 {
@@ -22,13 +22,14 @@
 }
 #+end_src
 - Change the region code, accountID and repositoryName accordingly
-- [[file:./images/eventbridge1_resized.png]]
-- select other
-- [[file:./images/eventbridge2_resized.png]]
+- referenceName includes the tags that are allowed.
+- [[file:./images/pathbased/eventbridge1_resized.png]]
+- select other and leave the sample as it is
+- [[file:./images/pathbased/eventbridge2_resized.png]]
 - select custom json and paste the above provided code with your changes
-- [[file:./images/eventbridge3_resized.png]]
-- Use AWS code-pipeline ARN in the target
-- [[file:./images/eventbridge5_resized.png]]
+- [[file:./images/pathbased/eventbridge3_resized.png]]
+- Select AWS Service and find codepipeline and use AWS code-pipeline ARN in the target
+- [[file:./images/pathbased/eventbridge5_resized.png]]
 
 
 ** Create a tag using git cli
@@ -39,11 +40,16 @@ git add .
 git commit -m "somechanges"
 
 #set a tag for that commit using the commitHash
-git tag version1 4a5b5d8
+#sample command: git tag <tagname> <commitHash until atleast 4places>
+git tag version1.0 4a5b5d8
+
 
 #push the tag
-git push origin version1
+git push origin version1.0
 
 #verify in the log and on the codecommit console as well
 git log -1
 #+end_src
+
+- The CodePipeline will now only run when one of the allowed tags is included in the pushed changes.
+- It will  not automatically run when the tag is not found.
