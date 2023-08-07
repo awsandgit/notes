@@ -13,6 +13,15 @@ sudo amazon-linux-extras install epel
 sudo yum install s3fs-fuse
 #+end_src
 
+
+** On AWS Console
+*** Create an S3 Bucket
+- make a bucket to store logs
+
+*** Create an IAM user
+- give s3 access to this user using IAM policy
+- generate access and secret access keys for this user
+
 ** ON EC2 where it is to be mounted
 #+begin_src bash
 #replace access and secret access keys with yours
@@ -29,10 +38,3 @@ s3fs#apachlog-101 /var/log/apache fuse _netdev,allow_other,use_path_request_styl
 #+end_src
 - use -o nonempty for folders that are full, make sure to take backup beforehand
 
-* On AWS Console
-** Create an S3 Bucket
-- make a bucket to store logs
-
-** Create an IAM user
-- give s3 access to this user using IAM policy
-- generate access and secret access keys for this user
