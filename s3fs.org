@@ -1,0 +1,34 @@
+* S3FS
+** Install
+- Official git repo: [[https://github.com/s3fs-fuse/s3fs-fuse]]
+- ON ubuntu
+#+begin_src bash
+sudo apt install -y build-essential libfuse-dev libcurl4-openssl-dev libxml2-dev pkg-config libssl-dev
+sudo apt install s3fs
+#+end_src
+
+- ON Amazon linux
+#+begin_src bash
+sudo amazon-linux-extras install epel
+sudo yum install s3fs-fuse
+#+end_src
+
+** Create an IAM user
+  - give s3 access using policy
+  - generate access and secret access keys
+
+** ON ec2 where it is to mounted
+#+begin_src bash
+#replace access and secret access keys with yours
+echo ACCESS_KEY_ID:SECRET_ACCESS_KEY > ${HOME}/.passwd-s3fs
+chmod 600 ${HOME}/.passwd-s3fs
+
+s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs
+#+end_src
+
+** To mount permanently
+- edit /etc/fstab
+#+begin_src bash
+s3fs#apachlog-101 /var/log/apache fuse _netdev,allow_other,use_path_request_style,passwd_file=/home/ubuntu/.passwd-s3fs 0 0
+#+end_src
+- use -o nonempty for folders that are full, make sure to take backup beforehand
