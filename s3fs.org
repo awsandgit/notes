@@ -13,11 +13,7 @@ sudo amazon-linux-extras install epel
 sudo yum install s3fs-fuse
 #+end_src
 
-** Create an IAM user
-  - give s3 access using policy
-  - generate access and secret access keys
-
-** ON ec2 where it is to mounted
+** ON EC2 where it is to be mounted
 #+begin_src bash
 #replace access and secret access keys with yours
 echo ACCESS_KEY_ID:SECRET_ACCESS_KEY > ${HOME}/.passwd-s3fs
@@ -32,3 +28,11 @@ s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs
 s3fs#apachlog-101 /var/log/apache fuse _netdev,allow_other,use_path_request_style,passwd_file=/home/ubuntu/.passwd-s3fs 0 0
 #+end_src
 - use -o nonempty for folders that are full, make sure to take backup beforehand
+
+* On AWS Console
+** Create an S3 Bucket
+- make a bucket to store logs
+
+** Create an IAM user
+- give s3 access to this user using IAM policy
+- generate access and secret access keys for this user
