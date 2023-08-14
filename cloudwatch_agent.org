@@ -24,6 +24,11 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
                          "file_path": "/var/log/apache2/error.log",
                          "log_group_name": "apache-error-log",
                          "log_stream_name": "{instance_id}"
+                     },
+                     {
+                         "file_path": "/root/.pm2/index-error.log",
+                         "log_group_name": "apache-error-log",
+                         "log_stream_name": "{instance_id}"
                      }
                  ]
              }
