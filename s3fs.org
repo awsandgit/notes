@@ -13,7 +13,7 @@ sudo amazon-linux-extras install epel
 sudo yum install s3fs-fuse
 #+end_src
 
-- From source - latest version(for older ubuntu)
+- From source latest version(for older linux)
 #+begin_src bash
 sudo apt install -y build-essential libfuse-dev libcurl4-openssl-dev libxml2-dev pkg-config libssl-dev
 wget https://github.com/s3fs-fuse/s3fs-fuse/archive/refs/tags/v1.93.zip
@@ -49,6 +49,9 @@ chmod 600 /etc/passwd-s3fs
 
 #to debug use
 s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs -o dbglevel=info -f -o curldbg
+
+#check with the below command
+df -h
 #+end_src
 
 ** To mount permanently
