@@ -1,0 +1,37 @@
+* Logrotate
+** Configure logrotate on the server
++ make a custom file in /etc/logrotate.d
+#+begin_src bash
+/var/www/html/var/log/order_items.log {
+    su www-data www-data
+    daily
+    size 100M
+    copytruncate
+    rotate 4
+    missingok
+    notifempty
+    dateext
+    dateformat -%Y-%m-%d_%s
+    postrotate
+        mv /var/www/html/var/log/order_items.log-* /s3logs/order_items
+    endscript
+}
+#+end_src
+- the destination folder should exist before running this script
+
++ commands to test logrotate
+#+begin_src bash
+#to test output without actually running it
+logrotate -d /etc/logrotate.d/customfile
+#OR
+logrotate -v /etc/logrotate.d/customfile
+
+#to actually run the script manually
+logrotate /etc/logrotate.d/customfile
+
+#restart the logrotate service to run the custom file next time the cron for logrotate runs
+systemctl restart logrotate.service
+#OR on older systems
+systemctl restart rsyslog.service
+#+end_src
+

@@ -13,12 +13,24 @@ sudo amazon-linux-extras install epel
 sudo yum install s3fs-fuse
 #+end_src
 
+- From source - latest version(for older ubuntu)
+#+begin_src bash
+sudo apt install -y build-essential libfuse-dev libcurl4-openssl-dev libxml2-dev pkg-config libssl-dev
+wget https://github.com/s3fs-fuse/s3fs-fuse/archive/refs/tags/v1.93.zip
+unzip v1.93.zip
+cd s3fs-fuse-1.93/
+./autogen.sh
+./configure
+make
+make install
+source /etc/environment
+#+end_src
 
 ** On AWS Console
 *** Create an S3 Bucket
 - make a bucket to store logs
 
-*** Create an IAM user
+*** Create an IAM user for S3
 - give s3 access to this user using IAM policy
 - generate access and secret access keys for this user
 
@@ -29,6 +41,14 @@ echo ACCESS_KEY_ID:SECRET_ACCESS_KEY > ${HOME}/.passwd-s3fs
 chmod 600 ${HOME}/.passwd-s3fs
 
 s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs
+
+#for a system-wide passwd file make a file
+touch /etc/passwd-s3fs
+#store your s3-user keys in this file in this format "ACCESS_KEY_ID:SECRET_ACCESS_KEY"
+chmod 600 /etc/passwd-s3fs
+
+#to debug use
+s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs -o dbglevel=info -f -o curldbg
 #+end_src
 
 ** To mount permanently
