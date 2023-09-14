@@ -1,0 +1,98 @@
+* Log.io Setup
+** Installation
+*** Requirements
+- Install nodejs and npm
+#+begin_src bash
+npm install -g log.io
+npm install -g log.io-file-input
+#+end_src
+- You need two free ports for this setup
+- One for message server
+- Other for http server
+
+** Setup on your linux instance
+- Log in as a user
+#+begin_src bash
+su myuser
+#+end_src
+- Go to the home directory of user and execute these commands
+#+begin_src bash
+cd
+mkdir ~/.log.io
+# Check for free ports using netstat
+netstat -tulnp
+# create these files and directories
+touch ~/.log.io/server.json
+cat > ~/.log.io/server.json <<EOF
+{
+  "messageServer": {
+    "port": 5997, //This is for message transmission
+    "host": "127.0.0.1"
+  },
+  "httpServer": {
+    "port": 5998, //This port will be used for seeing the logs
+    "host": "127.0.0.1"
+  },
+  "basicAuth": {
+    "realm": "mylog_user",		//This is the login user
+    "users": {
+      "mylog_user": "MylogUser@10"    //This is the login password
+    }
+  }
+}
+EOF
+
+mkdir -p ~/.log.io/inputs
+cat > ~/.log.io/inputs/file.json <<EOF
+{
+  "messageServer": {
+    "host": "127.0.0.1",
+    "port": 5997
+  },
+  "inputs": [
+    {
+      "source": "mylogdev", //The source name to be displayed
+      "stream": "mylogdev-out.log", //Stream file name
+      "config": {
+        "path": "/var/www/html/myuser/.pm2/logs/mylogdev-out.log"	//The path is the same as in the pm2 logs
+      }
+    },
+    {
+      "source": "mylogdeverror",
+      "stream": "mylogdev-error.log",
+      "config": {
+        "path": "/var/www/html/amex_aesa/.pm2/logs/mylogdev-error.log"
+      }
+    }
+  ]
+}
+EOF
+npm install log.io-file-input
+pm2 start /bin/log.io-server
+pm2 start /bin/log.io-file-input --name log-io-file-input
+#+end_src
+
+
+** Create a apache config file
+- As the root user
+#+begin_src bash
+cd /etc/httpd/conf.d/
+# be sure to use the same port as the httpserver port defined above
+cat > mylogdev.conf <<EOF
+<VirtualHost *:80>
+        Servername mylog.domain.in
+        #Redirect permanent / https://mylog.domain.in
+        ProxyPreserveHost On
+        ProxyPass / http://127.0.0.1:5998/
+        ProxyPassReverse / http://127.0.0.1:5998/
+        Header set Access-Control-Allow-Origin "*"
+        RewriteEngine on
+RewriteCond %{SERVER_NAME} =mylog.domain.in
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+EOF
+apachectl configtest
+systemctl reload httpd
+certbot --apache -d varun.appskeeper.in
+
+#+end_src
