@@ -93,6 +93,6 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 EOF
 apachectl configtest
 systemctl reload httpd
-certbot --apache -d varun.appskeeper.in
+certbot --apache -d mylog.domain.in
 
 #+end_src
