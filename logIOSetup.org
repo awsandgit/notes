@@ -71,9 +71,11 @@ npm install log.io-file-input
 pm2 start /bin/log.io-server
 pm2 start /bin/log.io-file-input --name log-io-file-input
 #+end_src
+- you can now see these logs on your http://{serverIP}:5998
+- make sure the port is allowed the firewall/sg
 
-
-** Create a apache config file
+** If you want to run this on a subdomain do this:
+- Create a apache config file
 - As the root user
 #+begin_src bash
 cd /etc/httpd/conf.d/
@@ -96,3 +98,7 @@ systemctl reload httpd
 certbot --apache -d mylog.domain.in
 
 #+end_src
+
+** Results:
+- You can now head over to your browser and enter https://mylog.domain.in
+- After entering the username and password that you set, you will be able to see the logs.
