@@ -37,7 +37,7 @@ cat >load-balancer-role-trust-policy.json <<EOF
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::$acid:oidc-provider/oidc.eks.region-code.amazonaws.com/id/$oid"
+                "Federated": "arn:aws:iam::$acid:oidc-provider/oidc.eks.$region.amazonaws.com/id/$oid"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {

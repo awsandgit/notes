@@ -1,0 +1,60 @@
+#+title: Ecs Jenkins
+
+#+begin_src javascript
+
+pipeline {
+  agent any
+
+  environment {
+    AWS_ACCOUNT_ID = "448224244244"
+    AWS_DEFAULT_REGION = "us-east-1"
+    IMAGE_REPO_NAME = "repo-backend-nodejs"
+    IMAGE_TAG = "latest"
+    ECR_REGISTRY_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+    ECS_CLUSTER_NAME = "app-dev-Cluster"
+    ECS_SERVICE_NAME = "app-dev-nodejs-service"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        // Checkout the source code from GitLab
+        git branch: 'UAT', credentialsId: 'your-git-credentials', url: 'https://github.com/awsandgit/nodejs'
+      }
+    }
+
+    stage('Build Docker image') {
+      steps {
+        script {
+          // Build Docker image
+            sh "aws s3 cp s3://bucket-name-env/nodejsenv ."
+            sh "cp nodejsenv .env.dev"
+            docker.build("${IMAGE_REPO_NAME}:${IMAGE_TAG}")
+        //    sh "docker build --no-cache -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} ."
+        }
+      }
+    }
+
+    stage('Push to ECR') {
+      steps {
+        script {
+          // Log in to ECR
+          sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
+
+          // Tag and push Docker image to ECR
+          sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${ECR_REGISTRY_URL}/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+          sh "docker push ${ECR_REGISTRY_URL}/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+        }
+      }
+    }
+    stage('Update ECS Service') {
+      steps {
+        script {
+          // Update the ECS Service
+          sh "aws ecs update-service --cluster ${ECS_CLUSTER_NAME} --service ${ECS_SERVICE_NAME} --force-new-deployment"
+        }
+      }
+    }
+  }
+}
+#+end_src
