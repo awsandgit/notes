@@ -20,7 +20,7 @@
 ** Monolithic .gitlab-ci.yml
 - Project Directory Structure:
   - *MY NodeJS Project*
-    - .gitlab.ci.yml
+    - .gitlab-ci.yml
     - *scripts/*
       - start-dev.sh
       - start-qa.sh
@@ -78,7 +78,7 @@ deploy:
 ** EKS .gitlab-ci.yml
 - Project Directory Structure:
   - *MY NodeJS Project*
-    - .gitlab.ci.yml
+    - .gitlab-ci.yml
     - *.k8s-staging/*
       - deploy-staging.sh
       - deployment.yaml
