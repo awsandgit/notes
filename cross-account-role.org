@@ -8,7 +8,7 @@
   - [[#through-aws-cli][Through AWS CLI]]
 
 * Overview
-Create an IAM role in AWS Account A that allows access to another AWS Account B.
+Create an IAM role in AWS Account A that allows access to its resources from another AWS Account B.
 ** AWS Accounts
 - Account A
 - Account B
