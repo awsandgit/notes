@@ -92,7 +92,9 @@ aws sts assume-role --role-arn "arn:aws:iam::591190141663:role/admin-cross-accou
 
 #+begin_src bash
 #Replace $ROLEARN with your role
-DATA=$(aws sts assume-role --role-arn "$ROLEARN" --role-session-name admin-of-account-A)
+DATA=$(aws sts assume-role --role-arn "$ROLEARN" --role-session-name admin-of-account-A --duration 900)
+#the above generated creds will only be valid for 15minutes(900 seconds)
+# 15minutes < duration < 12hours
 
 export AWS_ACCESS_KEY_ID="$(echo "$DATA" | jq -r .Credentials.AccessKeyId)"
 export AWS_SECRET_ACCESS_KEY="$(echo "$DATA" | jq -r .Credentials.SecretAccessKey)"
