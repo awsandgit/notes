@@ -1,0 +1,104 @@
+#+title: Cross Account Role
+
+* Table of Contents :toc:
+- [[#overview][Overview]]
+  - [[#aws-accounts][AWS Accounts]]
+  - [[#iam-roles][IAM Roles]]
+- [[#using-the-role][Using the role]]
+  - [[#through-aws-cli][Through AWS CLI]]
+
+* Overview
+Create an IAM role in AWS Account A that allows access to another AWS Account B.
+** AWS Accounts
+- Account A
+- Account B
+
+** IAM Roles
+*** In Account A :ATTACH:
+:PROPERTIES:
+:ID:       064c292f-95ce-4afb-94db-3039a79d700d
+:END:
+- On AWS Console
+- Go to IAM
+- Create an IAM role
+  - with Custom Trust Policy
+  - Add a policy to provide what this role can access:
+    - E.g AdministratorAccess, this will allow admin access to anyone that assumes this role
+#+begin_src json
+#replace the account number in the arn with your aws account number
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::433210346673:root"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {}
+        }
+    ]
+}
+#+end_src
+- Note down the ARN of this role
+  - It will be something like: arn:aws:iam::591190141663:role/admin-cross-account-role
+- Sample screenshot below
+[[attachment:_20240130_232202Screenshot from 2024-01-30 23-20-05.png]]
+
+*** In Account B
+- Create an EC2
+- Create an IAM role
+  - Select Service Type as EC2
+  - Attach this policy to the role:
+    #+begin_src json
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "sts:AssumeRole",
+                "Resource": [
+                    "arn:aws:iam::591190141663:role/admin-cross-account-role"
+                ]
+            }
+        ]
+    }
+    #+end_src
+- Attach this role to the created EC2
+- Now this EC2 can assume the mentioned role in the above policy, to get the admin access to AWS Account A.
+
+* Using the role
+** Through AWS CLI
+#+begin_src bash
+aws sts assume-role --role-arn "arn:aws:iam::591190141663:role/admin-cross-account-role" --role-session-name admin-of-account-A
+#+end_src
+- Sample output:
+#+begin_src json
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAYO2HLNYERYDTHGYD",
+        "SecretAccessKey": "m06OKORg/qe/uH9uaW6v1zpTWhj693s36kdKnXzo",
+        "SessionToken": "FwoGZXIvYXdzEEkaDFSkBllD3Tw7XmSn2iKuAX5yd/ll+clXP6QHcRR+2kkWGbIHuxbMcBNtXW6mGR30e57oI6QOyQ/6kGrksZlBd4uxrjZIOf55VFUygV09OAGSCJXY3gLAdYOkaiyc8CQ01kp2fBCE1RiyrDUHHVg03beMVColpv5s8d3n/swZrH8Ao69GRyNdjWNZjw5WPb04ZF7s2c7+9X+urS2tb3W/TA/0loXcr1eUap4qJTqpaH0C426g5fYfQ3WAdyrclii8/t6tBjIt2RPfH7ASBBQ2mgG7yMrCq+ba1jbe5G22j3ybfvBGvjaPEog6rg+XZXecVAbw",
+        "Expiration": "2024-01-29T16:07:40Z"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAYO2HLNYE2HZLJWTR6:admin-of-account-A",
+        "Arn": "arn:aws:sts::591190141663:assumed-role/admin-cross-account-role/admin-of-account-A"
+    }
+}
+#+end_src
+- This will result in temporary access key pair & secret and sts token being generated that will be valid by default for a hour only as shown above
+- To use in scripts in an automated way we can use jq to directly export the keypair and token in environment variables
+
+#+begin_src bash
+#Replace $ROLEARN with your role
+DATA=$(aws sts assume-role --role-arn "$ROLEARN" --role-session-name admin-of-account-A)
+
+export AWS_ACCESS_KEY_ID="$(echo "$DATA" | jq -r .Credentials.AccessKeyId)"
+export AWS_SECRET_ACCESS_KEY="$(echo "$DATA" | jq -r .Credentials.SecretAccessKey)"
+export AWS_SESSION_TOKEN="$(echo "$DATA" | jq -r .Credentials.SessionToken)"
+
+aws iam list-users
+#This will now list users of Account A
+
+#+end_src
