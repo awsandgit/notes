@@ -76,9 +76,9 @@ aws sts assume-role --role-arn "arn:aws:iam::591190141663:role/admin-cross-accou
 #+begin_src json
 {
     "Credentials": {
-        "AccessKeyId": "ASIAYO2HLNYERYDTHGYD",
-        "SecretAccessKey": "m06OKORg/qe/uH9uaW6v1zpTWhj693s36kdKnXzo",
-        "SessionToken": "FwoGZXIvYXdzEEkaDFSkBllD3Tw7XmSn2iKuAX5yd/ll+clXP6QHcRR+2kkWGbIHuxbMcBNtXW6mGR30e57oI6QOyQ/6kGrksZlBd4uxrjZIOf55VFUygV09OAGSCJXY3gLAdYOkaiyc8CQ01kp2fBCE1RiyrDUHHVg03beMVColpv5s8d3n/swZrH8Ao69GRyNdjWNZjw5WPb04ZF7s2c7+9X+urS2tb3W/TA/0loXcr1eUap4qJTqpaH0C426g5fYfQ3WAdyrclii8/t6tBjIt2RPfH7ASBBQ2mgG7yMrCq+ba1jbe5G22j3ybfvBGvjaPEog6rg+XZXecVAbw",
+        "AccessKeyId": "ADDMEO2HLNYERYDTHGYD",
+        "SecretAccessKey": "dfjdk023i32i499eufjdjfskjskdf",
+        "SessionToken": "jfkdjsaldkjfaijij23lkrjflkdajfdalkjflakjf;lkajdlkfja;ljf;lajd;lkfjdafkjalkdjflakjdf;lnkjkjdlkfajd;lkjf;lakjf;akjdffljadlfkjalfjlakjflkajfkdjalkjdlkajfdlkajflkdjalkfdjalkjflkadjflkdafj",
         "Expiration": "2024-01-29T16:07:40Z"
     },
     "AssumedRoleUser": {
