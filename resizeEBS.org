@@ -1,11 +1,9 @@
 #+title: Resize Ebs
 
 * Table of Contents :toc:
-- [[#resize-aws-ebs][Resize AWS EBS]]
   - [[#modify-volume-on-aws][Modify Volume on AWS]]
   - [[#on-the-ec2][On the EC2]]
 
-* Resize AWS EBS
 ** Modify Volume on AWS
 - On AWS EC2 console
 - select your ec2, and go to storage tab
