@@ -1,0 +1,27 @@
+#+title: Resize Ebs
+
+* Resize EBS
+** Modify Volume on AWS
+** On the EC2
+- Run following commands:
+  #+begin_src bash
+  sudo lsblk
+  sudo growpart /dev/nvme0n1 1
+  #+end_src
+
+- check partition type:
+  #+begin_src bash
+  df -hT
+  #sample output
+  Filesystem      Type  Size  Used Avail Use% Mounted on
+/dev/nvme0n1p1  xfs   8.0G  1.6G  6.5G  20% /
+/dev/nvme1n1    xfs   8.0G   33M  8.0G   1% /data
+  #+end_src
+- if ext4:
+  #+begin_src bash
+  sudo resize2fs /dev/nvme0n1p1
+  #+end_src
+- if xfs:
+  #+begin_src bash
+  sudo xfs_growfs -d /
+  #+end_src
