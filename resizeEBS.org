@@ -1,11 +1,22 @@
 #+title: Resize Ebs
 
-* Resize EBS
+* Table of Contents :toc:
+- [[#resize-aws-ebs][Resize AWS EBS]]
+  - [[#modify-volume-on-aws][Modify Volume on AWS]]
+  - [[#on-the-ec2][On the EC2]]
+
+* Resize AWS EBS
 ** Modify Volume on AWS
+- On AWS EC2 console
+- select your ec2, and go to storage tab
+- select your volume and go to Volume > Actions > Modify
+- Increase the size to your required amount
+
 ** On the EC2
 - Run following commands:
   #+begin_src bash
   sudo lsblk
+  #replace /dev/nvme0n1 according to the output of lsblk command
   sudo growpart /dev/nvme0n1 1
   #+end_src
 
@@ -14,14 +25,15 @@
   df -hT
   #sample output
   Filesystem      Type  Size  Used Avail Use% Mounted on
-/dev/nvme0n1p1  xfs   8.0G  1.6G  6.5G  20% /
-/dev/nvme1n1    xfs   8.0G   33M  8.0G   1% /data
+  /dev/nvme0n1p1  xfs   8.0G  1.6G  6.5G  20% /
+  /dev/nvme1n1    xfs   8.0G   33M  8.0G   1% /data
   #+end_src
-- if ext4:
+- if type is ext4:
   #+begin_src bash
+  #replace /dev/nvme0n1p1 according to the partition name according to the output of df -hT command
   sudo resize2fs /dev/nvme0n1p1
   #+end_src
-- if xfs:
+- if type is xfs:
   #+begin_src bash
   sudo xfs_growfs -d /
   #+end_src
