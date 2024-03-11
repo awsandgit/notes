@@ -70,6 +70,8 @@ EOF
 npm install log.io-file-input
 pm2 start /bin/log.io-server
 pm2 start /bin/log.io-file-input --name log-io-file-input
+#if you get error "No such file or directory"
+#try using only pm2 start log.io-server or /usr/bin/log.io-server
 #+end_src
 - you can now see these logs on your http://{serverIP}:5998
 - make sure the port is allowed the firewall/sg

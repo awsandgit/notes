@@ -35,3 +35,22 @@ resource "aws_instance" my-ec2-instance {
               }
 }
 #+end_src
+
+#+begin_src emacs-lisp :tangle yes
+(+ 2 4 5)
+#+end_src
+
+#+RESULTS:
+: 11
+
+#+begin_src bash :tangle yes
+a=2
+b=4
+echo $(($a+$b))
+#+end_src
+
+#+RESULTS:
+: 6
+*** TODO [#A] do something
+*** DONE [#B] update website
+CLOSED: [2024-03-11 Mon 11:53]
