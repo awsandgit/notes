@@ -1,0 +1,18 @@
+#+title: Todo
+#+Author: Rohit Singh
+
+* MY TODO LIST
+** LOOP [#A] Daily Routine [0%] :Health:
+- [ ] Wake up before 8 AM
+- [ ] 15 minutes of Exercise or Yoga in the Morning
+- [ ] Sleep before 12 PM
+- [ ] Eat at Regular Timings
+** TODO [#A] Make Terraform proper notes
+** TODO [#B] Learn org-mode
+- [ ] org-agenda-files variable
+- [ ] <space> m q for tags, <space> o a <tags> for search
+** HOLD [#C] Study for AWS Solution Architect Associate (Certification)
+** LOOP [#C] Start Learning for JLPT N3 [%] :Japanese:
+- [ ] Learn 5 Words daily
+- [ ] Listen to a N3 Level podcast
+** PROJ [#C] Python PDFs and CSV
