@@ -1,6 +1,14 @@
-* Kubernetes Ingress
+#+title: Kubernetes Ingress
+#+Author: Rohit Singh
 
-**  Simple Ingress
+** Table of contents :toc:
+  - [[#simple-ingress][Simple Ingress]]
+  - [[#simple-ingress-with-ssl][Simple Ingress with SSL]]
+  - [[#host-based-ingress-with-ssl][Host-based Ingress with SSL]]
+  - [[#path-based-ingress][Path-based Ingress]]
+  - [[#switch-to-different-cluster-if-contexts-are-set][Switch to different cluster if contexts are set]]
+
+** Simple Ingress
 #+begin_src yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
