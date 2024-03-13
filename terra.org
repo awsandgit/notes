@@ -51,6 +51,7 @@ echo $(($a+$b))
 
 #+RESULTS:
 : 6
-*** TODO [#A] do something
+*** DONE [#A] do something
+CLOSED: [2024-03-11 Mon 16:41]
 *** DONE [#B] update website
 CLOSED: [2024-03-11 Mon 11:53]

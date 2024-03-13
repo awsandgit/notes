@@ -1,18 +1,47 @@
 #+title: Todo
 #+Author: Rohit Singh
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+OPTIONS: num:nil
 
 * MY TODO LIST
-** LOOP [#A] Daily Routine [0%] :Health:
+** LOOP [#A] Daily Routine [75%] :Health:
+:LOGBOOK:
+CLOCK: [2024-03-13 Wed 14:49]--[2024-03-13 Wed 14:50] =>  0:01
+:END:
 - [ ] Wake up before 8 AM
-- [ ] 15 minutes of Exercise or Yoga in the Morning
-- [ ] Sleep before 12 PM
-- [ ] Eat at Regular Timings
+- [X] 15 minutes of Exercise or Yoga in the Morning
+- [X] Sleep before 12 PM
+- [X] Eat at Regular Timings
 ** TODO [#A] Make Terraform proper notes
 ** TODO [#B] Learn org-mode
 - [ ] org-agenda-files variable
 - [ ] <space> m q for tags, <space> o a <tags> for search
+- [ ] <space> m c i and <space> m c o for clock in and clock out tasks
 ** HOLD [#C] Study for AWS Solution Architect Associate (Certification)
-** LOOP [#C] Start Learning for JLPT N3 [%] :Japanese:
-- [ ] Learn 5 Words daily
+** LOOP [#C] Start Learning for JLPT N3 [1/2] :Japanese:
+- [X] Learn 5 Words daily
 - [ ] Listen to a N3 Level podcast
 ** PROJ [#C] Python PDFs and CSV
+
+* Code Blocks
+** Languages
+a) Python
+b) Elisp
+c) Java
+d) Bash
+
+** Python
++ This is a *python* hello world! statement
+  #+begin_src python
+  print("Hello World!")
+  #+end_src
+** Elisp
++ Adding numbers in elisp
+  #+begin_src elisp
+  (+ 1 2 2 4 5)
+  #+end_src
+** Bash
++ Hello world in bash
+  #+begin_src sh
+  echo "Hello World!"
+  #+end_src
