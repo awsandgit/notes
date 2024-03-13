@@ -1,7 +1,7 @@
-#+title: Readme
+#+title: Personal Knowledge Library
 #+author: Rohit Singh
 
-** Notes Exist here
+** Notes below:
 1. [[file:ansible.org][Ansible]]
 2. [[file:cloudwatch_agent.org][CloudWatch Agent]]
 3. [[file:install_codedeploy_node.sh][CodeDeploy Agent]]
