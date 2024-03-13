@@ -50,96 +50,96 @@ kubectl config use-context arn:aws:eks:us-east-1:111222333444:cluster/first-eks-
 * 2 AWS CLI
 ** 2.1 Basics
 + To configure for the first time on default profile:
-  #+begin_src bash
-  aws configure
-  #check the identity of the user
-  aws sts get-caller-identity
-  #to configure a user in a different profile
-  aws configure --profile profile-name
-  #to use this profile just add --profile profile-name at the end of aws cli commands
-  aws sts get-caller-identity --profile profile-name
-  #to list all configured profiles
-  aws configure list-profiles
-  #+end_src
+#+begin_src bash
+aws configure
+#check the identity of the user
+aws sts get-caller-identity
+#to configure a user in a different profile
+aws configure --profile profile-name
+#to use this profile just add --profile profile-name at the end of aws cli commands
+aws sts get-caller-identity --profile profile-name
+#to list all configured profiles
+aws configure list-profiles
+#+end_src
 + For help on terminal:
-  #+begin_src bash
-  aws help
-  aws s3 help
-  aws s3 cp help
-  aws eks describe-cluster help
-  #by doing this you can figure out the command you need to do the action you want instead of just googling
-  #+end_src
+#+begin_src bash
+aws help
+aws s3 help
+aws s3 cp help
+aws eks describe-cluster help
+#by doing this you can figure out the command you need to do the action you want instead of just googling
+#+end_src
 
 ** 2.2 EKS related commands
 + Find cluster-names in a region
-  #+begin_src bash
-  aws eks list-clusters --region us-east-1
-  # generate kubeconfig file and set context to the specified cluster
-  aws eks update-kubeconfig --name cluster-name --region us-east-1
-  #+end_src
+#+begin_src bash
+aws eks list-clusters --region us-east-1
+# generate kubeconfig file and set context to the specified cluster
+aws eks update-kubeconfig --name cluster-name --region us-east-1
+#+end_src
 
 ** 2.3 Assume roles
 + Use aws sts command:
-  #+begin_src bash
-  aws sts assume-role --role-arn "arn:aws:iam::591190141663:role/my-role" --role-session-name mysession
-  #+end_src
+#+begin_src bash
+aws sts assume-role --role-arn "arn:aws:iam::591190141663:role/my-role" --role-session-name mysession
+#+end_src
 
 + for use in scripts:
-  #+begin_src bash
-  #Replace $ROLEARN with your role
-  DATA=$(aws sts assume-role --role-arn "$ROLEARN" --role-session-name admin --duration 900)
-  #the above generated creds will only be valid for 15minutes(900 seconds)
-  # 15minutes < duration < 12hours
-  export AWS_ACCESS_KEY_ID="$(echo "$DATA" | jq -r .Credentials.AccessKeyId)"
-  export AWS_SECRET_ACCESS_KEY="$(echo "$DATA" | jq -r .Credentials.SecretAccessKey)"
-  export AWS_SESSION_TOKEN="$(echo "$DATA" | jq -r .Credentials.SessionToken)"
-  #you can start using commands that the assumed role is allowed to execute, e.g,
-  aws iam list-users
-  #+end_src
+#+begin_src bash
+#Replace $ROLEARN with your role
+DATA=$(aws sts assume-role --role-arn "$ROLEARN" --role-session-name admin --duration 900)
+#the above generated creds will only be valid for 15minutes(900 seconds)
+# 15minutes < duration < 12hours
+export AWS_ACCESS_KEY_ID="$(echo "$DATA" | jq -r .Credentials.AccessKeyId)"
+export AWS_SECRET_ACCESS_KEY="$(echo "$DATA" | jq -r .Credentials.SecretAccessKey)"
+export AWS_SESSION_TOKEN="$(echo "$DATA" | jq -r .Credentials.SessionToken)"
+#you can start using commands that the assumed role is allowed to execute, e.g,
+aws iam list-users
+#+end_src
 
 ** 2.4 S3 related commands
 + List Buckets
-  #+begin_src bash
-  aws s3 ls
-  #list a bucket contents:
-  aws s3 ls s3://myUniqueBucket/
-  #+end_src
+#+begin_src bash
+aws s3 ls
+#list a bucket contents:
+aws s3 ls s3://myUniqueBucket/
+#+end_src
 
 + Copy from and to Bucket
-  #+begin_src bash
-  #aws s3 cp <source> <destination>
-  aws s3 cp myLocalfile.jpeg s3://myBucket101/myFolderthatdoesnotExist/
-  #to copy a folder use recursive flag
-  aws s3 cp --recursive s3://myBucket101/ ./myLocalfolder/
-  #use sync to sync-new-content only from source to destination
-  aws s3 sync myLocalfolder/ s3://myBucket101/
-  #use --delete to delete files from destination that don't exist in the source
-  aws s3 sync myLocalfolder/* s3://myBucket101/ --delete
-  #+end_src
+#+begin_src bash
+#aws s3 cp <source> <destination>
+aws s3 cp myLocalfile.jpeg s3://myBucket101/myFolderthatdoesnotExist/
+#to copy a folder use recursive flag
+aws s3 cp --recursive s3://myBucket101/ ./myLocalfolder/
+#use sync to sync-new-content only from source to destination
+aws s3 sync myLocalfolder/ s3://myBucket101/
+#use --delete to delete files from destination that don't exist in the source
+aws s3 sync myLocalfolder/* s3://myBucket101/ --delete
+#+end_src
 
 + To create a bucket
-  #+begin_src bash
-  aws s3 mb s3://myUniqueBucket --region us-east-1
-  #+end_src
+#+begin_src bash
+aws s3 mb s3://myUniqueBucket --region us-east-1
+#+end_src
 
 + To delete a bucket:
-  #+begin_src bash
-  #You will need to empty the bucket first
-  aws s3 rm --recursive s3://myUniqueBucket/
-  #then delete the bucket
-  aws s3 rb s3://myUniqueBucket
-  #+end_src
+#+begin_src bash
+#You will need to empty the bucket first
+aws s3 rm --recursive s3://myUniqueBucket/
+#then delete the bucket
+aws s3 rb s3://myUniqueBucket
+#+end_src
 
 + enable versioning:
-  #+begin_src bash
-  aws s3api put-bucket-versioning --bucket myUniqueBucket --region us-east-1
-  #+end_src
+#+begin_src bash
+aws s3api put-bucket-versioning --bucket myUniqueBucket --region us-east-1
+#+end_src
 ** 2.5 Cloudfront related commands
 + List Distributions
-  #+begin_src bash
-  aws cloudfront list-distributions
-  #+end_src
+#+begin_src bash
+aws cloudfront list-distributions
+#+end_src
 + Create Invalidation
-  #+begin_src bash
-  aws cloudfront create-invalidation --distribution-id=E3TDMB9X1YF04E --paths '/*'
-  #+end_src
+#+begin_src bash
+aws cloudfront create-invalidation --distribution-id=E3TDMB9X1YF04E --paths '/*'
+#+end_src
