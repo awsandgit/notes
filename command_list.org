@@ -19,6 +19,7 @@
   - [[#upgrade-control-plane][Upgrade Control Plane]]
   - [[#upgrade-core-components][Upgrade Core Components]]
   - [[#upgrade-nodegroup][Upgrade nodegroup]]
+  - [[#change-image-version-in-clusterautoscaler-deployment][Change image version in ClusterAutoScaler Deployment]]
 
 * 1 Kubectl
 ** 1.1 Basic useful commands
@@ -237,12 +238,15 @@ vpc:
 
 ** Upgrade Control Plane
 #+begin_src bash
-#change in config
+#change version in config and then run below
+#eg 1.24 to 1.25
 eksctl upgrade cluster -f config.yaml
 # pass --approve to really do it
 #+end_src
++ Upgrade the Control Plane from 1.24 to 1.29 step by step first
 
 ** Upgrade Core Components
++ Perform this after upgrading the control plane to latest version
 #+begin_src bash
 eks utils update-aws-node --cluster Clustername --approve
 eks utils update-kube-proxy --cluster Clustername --approve
@@ -250,13 +254,139 @@ eks utils update-core-dns --cluster Clustername --approve
 #+end_src
 
 ** Upgrade nodegroup
++ Edit config and add another nodegroup like this:
+  #+begin_src yaml
+  ---
+  apiVersion: eksctl.io/v1alpha5
+  kind: ClusterConfig
+  metadata:
+    name: cluster-preproduction
+    region: eu-west-3
+    version: '1.29'
+  privateCluster:
+    enabled: false
+  iam:
+    vpcResourceControllerPolicy: true
+    withOIDC: false
+  ################################################Autoscaling clusters###########################################################
+  nodeGroups:
+  - name: NodeGoup-1.29
+    instanceType: c5.xlarge
+    volumeSize: 60
+    volumeType: gp2
+    volumeEncrypted: true
+    disableIMDSv1: true
+    minSize: 2
+    maxSize: 2
+    desiredCapacity: 2
+    privateNetworking: true
+    labels: {role: worker-node}
+    kubeletExtraConfig:
+        kubeReserved:
+            cpu: "300m"
+            memory: "300Mi"
+            ephemeral-storage: "1Gi"
+        kubeReservedCgroup: "/kube-reserved"
+        systemReserved:
+            cpu: "300m"
+            memory: "300Mi"
+            ephemeral-storage: "1Gi"
+        evictionHard:
+            memory.available:  "200Mi"
+            nodefs.available: "10%"
+        featureGates:
+            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
+    iam:
+      attachPolicyARNs:
+      - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+      - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore  #you can create policy specfic for bucket created
+      withAddonPolicies:
+        autoScaler: true
+        ebs: true
+        # cloudWatch: true
+    ssh:
+      allow: true
+      publicKeyName: 'taxicoin-preprod'
+    tags:
+      k8s.io/cluster-autoscaler/enabled: 'true'
+    availabilityZones: ['eu-west-3b','eu-west-3c','eu-west-3a']
+  - name: NodeGoup-1
+    instanceType: c5.xlarge
+    volumeSize: 60
+    volumeType: gp2
+    volumeEncrypted: true
+    disableIMDSv1: true
+    minSize: 2
+    maxSize: 2
+    desiredCapacity: 2
+    privateNetworking: true
+    labels: {role: worker-node}
+    kubeletExtraConfig:
+        kubeReserved:
+            cpu: "300m"
+            memory: "300Mi"
+            ephemeral-storage: "1Gi"
+        kubeReservedCgroup: "/kube-reserved"
+        systemReserved:
+            cpu: "300m"
+            memory: "300Mi"
+            ephemeral-storage: "1Gi"
+        evictionHard:
+            memory.available:  "200Mi"
+            nodefs.available: "10%"
+        featureGates:
+            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
+    iam:
+      attachPolicyARNs:
+      - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+      - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore  #you can create policy specfic for bucket created
+      withAddonPolicies:
+        autoScaler: true
+        ebs: true
+        # cloudWatch: true
+    ssh:
+      allow: true
+      publicKeyName: 'taxicoin-preprod'
+    tags:
+      k8s.io/cluster-autoscaler/enabled: 'true'
+    availabilityZones: ['eu-west-3b','eu-west-3c','eu-west-3a']
+  ##############################################Enable Logging###########################################################
+  #cloudWatch:
+  # clusterLogging:
+  #   enableTypes: ["audit", "authenticator", "scheduler", "api", "controllerManager"]
+  vpc:
+    id: "vpc-4390fccdefa036a8a" # This is the id of your VPC in AWS.
+    subnets: # In this section, include all the subnets of your AWS VPC. Follow the example format below.
+      private: # Private subnet details. Add an entry for each region of your VPC.
+        eu-west-3a: { id: subnet-0cdjf9349u34j3f } # Change to be the subnet region and subnet id.
+        eu-west-3b: { id: subnet-010dd34u394fj3j } # Change to be the subnet region and subnet id.
+        eu-west-3c: { id: subnet-0438u4939fdfdf9 } # Change to be the subnet region and subnet id.
+      public: # Public subnet details. Add an entry for each region of your VPC.
+        eu-west-3a: { id: subnet-034u3498jfdfjddjf } # Change to be the subnet region and subnet id.
+        eu-west-3b: { id: subnet-034u39jfjfkdjfdk } # Change to be the subnet region and subnet id.
+        eu-west-3c: { id: subnet-03rjfd9fjdfkjdkfd } # Change to be the subnet region and subnet id.
+  #+end_src
+
++ After editing run this:
 #+begin_src bash
-#Edit config and add nodegroup
 eksctl create nodegroup -f config.yaml
-#delete old nodegroup from config
+#delete old nodegroup from config and run:
 eksctl delete nodegroup -f config.yaml --only-missing
 #+end_src
 *** For a managed nodegroup
 #+begin_src bash
 eksctl upgrade nodegroup --cluster clustername --name managed --kubernetes-version 1.26
 #+end_src
+
+** Change image version in ClusterAutoScaler Deployment
++ Edit the deployment using:
+  #+begin_src bash
+  kubectl edit deploy cluster-autoscaler -n kube-sytem
+  #replace registry.k8s.io/autoscaling/cluster-autoscaler:v1.24.n with registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.2
+  #+end_src
