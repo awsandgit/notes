@@ -1,5 +1,4 @@
 #+title: Terraform
-https://gitlab.appinvent.in/tracket-app/android/-/tree/codeRefactor?ref_type=heads
 
 ** Basic terraform commands
 - terraform init
