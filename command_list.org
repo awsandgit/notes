@@ -13,13 +13,17 @@
   - [[#23-assume-roles][2.3 Assume roles]]
   - [[#24-s3-related-commands][2.4 S3 related commands]]
   - [[#25-cloudfront-related-commands][2.5 Cloudfront related commands]]
+  - [[#26-iam-related-commands][2.6 IAM related commands]]
 - [[#3-eksctl-upgrade-eks][3 EKSCTL Upgrade EKS]]
   - [[#upgrade-eksctl-itself][Upgrade eksctl itself]]
+  - [[#check-for-deprecated-apiversion-using-kubent][Check for deprecated apiVersion using Kubent]]
   - [[#cluster-config][Cluster config]]
   - [[#upgrade-control-plane][Upgrade Control Plane]]
   - [[#upgrade-core-components][Upgrade Core Components]]
   - [[#upgrade-nodegroup][Upgrade nodegroup]]
   - [[#change-image-version-in-clusterautoscaler-deployment][Change image version in ClusterAutoScaler Deployment]]
+- [[#4-openvpn3][4 OpenVpn3]]
+- [[#5-pass][5 Pass]]
 
 * 1 Kubectl
 ** 1.1 Basic useful commands
@@ -52,7 +56,6 @@ kubectl get secret adminservice-secret -n node-staging -o jsonpath='{.data.\.env
 kubectl config get-contexts
 kubectl config use-context arn:aws:eks:us-east-1:111222333444:cluster/first-eks-cluster
 #+end_src
-
 
 * 2 AWS CLI
 ** 2.1 Basics
@@ -150,6 +153,15 @@ aws cloudfront list-distributions
 #+begin_src bash
 aws cloudfront create-invalidation --distribution-id=E3TDMB9X1YF04E --paths '/*'
 #+end_src
+** 2.6 IAM related commands
+- List Profiles
+#+begin_src bash
+aws iam list-instance-profiles
+#+end_src
+- Delete an instance profile by its name
+#+begin_src bash
+aws iam delete-instance-profile --instance-profile-name ssm-profile --profile your-iam-profile
+#+end_src
 
 
 * 3 EKSCTL Upgrade EKS
@@ -160,6 +172,15 @@ sudo mv /tmp/eksctl /usr/local/bin
 eksctl version
 #+end_src
 
+** Check for deprecated apiVersion using Kubent
+1. install
+#+begin_src bash
+sh -c "$(curl -sSL https://git.io/install-kubent)"
+#+end_src
+2. Run
+#+begin_src
+kubent
+#+end_src
 ** Cluster config
 #+begin_src yaml
 ---
@@ -215,7 +236,7 @@ nodeGroups:
       # cloudWatch: true
   ssh:
     allow: true
-    publicKeyName: 'taxicoin-preprod'
+    publicKeyName: 'myapp-preprod'
   tags:
     k8s.io/cluster-autoscaler/enabled: 'true'
   availabilityZones: ['eu-west-3b','eu-west-3c','eu-west-3a']
@@ -248,9 +269,9 @@ eksctl upgrade cluster -f config.yaml
 ** Upgrade Core Components
 + Perform this after upgrading the control plane to latest version
 #+begin_src bash
-eks utils update-aws-node --cluster Clustername --approve
-eks utils update-kube-proxy --cluster Clustername --approve
-eks utils update-core-dns --cluster Clustername --approve
+eksctl utils update-aws-node --cluster Clustername --approve
+eksctl utils update-kube-proxy --cluster Clustername --approve
+eksctl utils update-core-dns --cluster Clustername --approve
 #+end_src
 
 ** Upgrade nodegroup
@@ -309,7 +330,7 @@ eks utils update-core-dns --cluster Clustername --approve
         # cloudWatch: true
     ssh:
       allow: true
-      publicKeyName: 'taxicoin-preprod'
+      publicKeyName: 'myapp-preprod'
     tags:
       k8s.io/cluster-autoscaler/enabled: 'true'
     availabilityZones: ['eu-west-3b','eu-west-3c','eu-west-3a']
@@ -352,7 +373,7 @@ eks utils update-core-dns --cluster Clustername --approve
         # cloudWatch: true
     ssh:
       allow: true
-      publicKeyName: 'taxicoin-preprod'
+      publicKeyName: 'myapp-preprod'
     tags:
       k8s.io/cluster-autoscaler/enabled: 'true'
     availabilityZones: ['eu-west-3b','eu-west-3c','eu-west-3a']
@@ -390,3 +411,35 @@ eksctl upgrade nodegroup --cluster clustername --name managed --kubernetes-versi
   kubectl edit deploy cluster-autoscaler -n kube-sytem
   #replace registry.k8s.io/autoscaling/cluster-autoscaler:v1.24.n with registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.2
   #+end_src
+
+* 4 OpenVpn3
+- session-list
+#+begin_src bash
+openvpn3 sessions-list
+#+end_src
+- connect using file
+#+begin_src bash
+openvpn3 session-start --config dev.ovpn
+#+end_src
+- disconnect using path
+#+begin_src bash
+openvpn3 session-manage --path /net/openvpn/v3/sessions/1f0bb09cs0690s4dcbs8ee2s411eb7da09bd --disconnect
+#+end_src
+* 5 Pass
+#+begin_src bash
+#Initialize
+pass init gpgid
+#Add password
+pass insert secretname
+pass insert -m folder/secretname
+#Copy to Clipboard
+pass -c secretname
+#print
+pass secretname
+#edit
+pass edit secretname
+#initialize as git repo
+pass git init
+#push and pull to remote after adding remote url
+pass git push
+#+end_src

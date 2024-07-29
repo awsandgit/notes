@@ -34,9 +34,9 @@ cat > ~/.log.io/server.json <<EOF
     "host": "127.0.0.1"
   },
   "basicAuth": {
-    "realm": "mylog_user",		//This is the login user
+    "realm": "mylog_user",
     "users": {
-      "mylog_user": "MylogUser@10"    //This is the login password
+      "mylog_user": "MylogUser@10"    //This is the login user and login password
     }
   }
 }
